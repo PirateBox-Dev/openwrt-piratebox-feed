@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+
+NAME=ext_mnt
+START=40               #39 = usb
+STOP=79
+EXTRA_COMMANDS="init"
+EXTRA_HELP="	init	    Mount USB and install ext_mnt + flash on a fresh USB disk"
+
+. /usr/share/ext/ext.common
+
+init() {
+  ext_init
+}
+
+start() {
+  ext_mount usb
+  # init if we have a fresh USB disk
+  if [ ! -d "$ext_usbdir" ]
+  then
+      echo "WARNING: empty USB disc found. no mount done"
+      exit 9
+  fi
+  ext_mount usb swap ext
+}
+
+stop() {
+  ext_stop
+}
+
