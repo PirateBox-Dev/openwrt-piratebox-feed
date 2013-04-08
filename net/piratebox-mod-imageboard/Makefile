@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox-mod-imageboard
 PKG_VERSION:=0.0.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -10,13 +10,12 @@ include $(INCLUDE_DIR)/package.mk
 define Package/piratebox-mod-imageboard
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=imageboard
+  TITLE:=imageboard modification
   SUBMENU:=PirateBox
-  #DESCRIPTION:=This variable is obsolete. use the Package/name/description define instead!
   URL:=http://piratebox.aod-rpg.de
-  DEPENDS:=+perl +perlbase-base   +perlbase-cgi  +perlbase-essential  +perlbase-file  +perlbase-bytes  +perlbase-config   +perlbase-data  +perlbase-db-file   +perlbase-digest +perlbase-encode  +perlbase-encoding  +perlbase-fcntl  +perlbase-gdbm-file  +perlbase-integer  +perlbase-socket  +perlbase-time  +perlbase-unicode  +perlbase-unicore  +perlbase-utf8  +perlbase-xsloader  +unzip
+  DEPENDS:=piratebox +perl +perlbase-base   +perlbase-cgi  +perlbase-essential  +perlbase-file  +perlbase-bytes  +perlbase-config   +perlbase-data  +perlbase-db-file   +perlbase-digest +perlbase-encode  +perlbase-encoding  +perlbase-fcntl  +perlbase-gdbm-file  +perlbase-integer  +perlbase-socket  +perlbase-time  +perlbase-unicode  +perlbase-unicore  +perlbase-utf8  +perlbase-xsloader  +unzip
   PKGARCH:=all
-  MAINTAINER:=xxxx
+  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rgp.de>
 endef
 
 define Package/piratebox-mod-imageboard/description
