@@ -25,16 +25,16 @@ define Package/piratebox-mod-imageboard/description
 endef
 
 
-#define Package/piratebox-mod-imageboard/postinst
-#        #!/bin/sh
-#        #stuff needed because there is no ext-perl package
-#	ln -s /usr/local/bin/perl /usr/bin/perl
-#	ln -s /usr/local/lib/perl* /usr/lib/
-#	#start the init from piratebox scripts
-#        . /etc/piratebox.config
-#	$$pb_pbmount/bin/install_piratebox.sh  "$$pb_piratebox_conf"  imageboard
-#       exit 0
-#endef
+define Package/piratebox-mod-imageboard/postinst
+        #!/bin/sh
+        #stuff needed because there is no ext-perl package
+	ln -s /usr/local/bin/perl /usr/bin/perl
+	ln -s /usr/local/lib/perl* /usr/lib/
+	#start the init from piratebox scripts
+        . /etc/piratebox.config
+	$$pb_pbmount/bin/install_piratebox.sh  "$$pb_piratebox_conf"  imageboard
+       exit 0
+endef
 
 
 define Build/Compile
