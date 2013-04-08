@@ -9,3 +9,23 @@ Contains stuff for getting Makefiles for ipk via OpenWRT toolchain.
 add the following lines:
 
 src-git piratebox git://github.com/PirateBox-Dev/openwrt-piratebox-feed.git
+
+
+------------
+Ressources:
+
+http://wiki.openwrt.org/start
+
+http://wiki.openwrt.org/doc/howto/build
+http://wiki.openwrt.org/doc/howtobuild/single.package
+
+### http://wiki.openwrt.org/doc/howto/buildroot.exigence
+
+http://wiki.openwrt.org/doc/devel/feeds
+
+http://wiki.openwrt.org/doc/devel/packages
+http://wiki.openwrt.org/doc/techref/initscripts
+
+
+old?? http://downloads.openwrt.org/docs/buildroot-documentation.html
+
