@@ -1,0 +1,11 @@
+--spacer--
+
+Contains stuff for getting Makefiles for ipk via OpenWRT toolchain.
+
+
+# cp  feeds.conf.default feeds.conf
+# vi feeds.conf
+
+add the following lines:
+
+src-git piratebox git://github.com/PirateBox-Dev/openwrt-piratebox-feed.git
