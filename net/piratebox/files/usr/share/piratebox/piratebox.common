@@ -236,13 +236,13 @@ pb_start() {
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
   mkdir -p $pb_share    
-  $pb_pbmount/init.d/piratebox_router start
+  $pb_pbmount/init.d/piratebox_alt start
 }
 
 
 pb_stop() {
   # killing all piratebox processes
-  $pb_pbmount/init.d/piratebox_router stop
+  $pb_pbmount/init.d/piratebox_alt stop
 
   sleep 3
   pb_umount pb
