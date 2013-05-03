@@ -52,7 +52,7 @@ define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/usr/share/ext/* $(1)/usr/share/ext/
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
-	$(INSTALL_BIN) ./files/etc/ext.config $(1)/etc/init.d/
+	$(INSTALL_BIN) ./files/etc/ext.config $(1)/etc/
 endef
 
 $(eval $(call BuildPackage,extendRoot))
