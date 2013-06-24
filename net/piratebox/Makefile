@@ -62,6 +62,11 @@ define Package/piratebox/postinst
 	   /etc/init.d/dnsmasq disable
 	fi
 
+	if [ -e /etc/init.d/watchdog ] ; then
+		/etc/init.d/watchdog stop
+		/etc/init.d/watchdog disable
+	fi
+
 	##only do network config etc, when first install
 	setup_run=0
 	if [ ! -e  $$pb_inst_done ]  ; then
@@ -101,7 +106,7 @@ endef
 define Package/piratebox/preinst
 	#!/bin/sh
 	#Disable Piratebox, it it seems that it is installed
-	if [ -d /opt/piratebox ] ; then
+	if [ -e  /etc/init.d/piratebox  ] ; then
 	   /etc/init.d/piratebox stop
 	fi
 
