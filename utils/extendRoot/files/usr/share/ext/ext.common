@@ -275,7 +275,7 @@ ext_fix_path() {
     if  !  grep -q "ENH_LIB"  /etc/profile  ; then
        echo "${initscript}: Fixing LD_LIBRARY_PATH"
        echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >> /etc/profile 
-       echo "export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:\$ENH_LIB\"" >> /etc/profile
+       echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >> /etc/profile
     fi
 }
 
