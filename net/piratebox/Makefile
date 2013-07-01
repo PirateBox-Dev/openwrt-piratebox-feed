@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
-PKG_VERSION:=0.7.0
+PKG_VERSION:=1.0.0
 PKG_RELEASE:=2
 
 
@@ -15,7 +15,7 @@ define Package/piratebox
   URL:=http://piratebox.aod-rpg.de
   DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv
   PKGARCH:=all
-  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rgp.de>
+  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
 
 define Package/piratebox/description
