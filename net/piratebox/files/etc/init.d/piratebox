@@ -62,5 +62,5 @@ stop() {
 }
 
 stop_keep() {
-    $pb_pbmount/init.d/piratebox_router stop
+    $pb_pbmount/init.d/piratebox_alt stop
 }
