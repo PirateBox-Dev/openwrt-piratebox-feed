@@ -286,7 +286,8 @@ ext_create_path_fixer_tool(){
      	 	 echo "export PATH=\"\$PATH:\$ENH_PATH\"" >> $EXT_PATH_TOOL
 		 echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >>  $EXT_PATH_TOOL
 		 echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >>  $EXT_PATH_TOOL
-		 chown a+x $EXT_PATH_TOOL
+		 chmod a+x $EXT_PATH_TOOL
+		
 	fi
 }
 
