@@ -263,27 +263,37 @@ ext_fix_path() {
   #[ -d "$ext_mountpoint/usr/lib" ] || mkdir -p "$ext_mountpoint/usr/lib"
   # [-L  "$ext_mountpoint/lib" ] || ln -sf "$ext_mountpoint/usr/lib" "$ext_mountpoint/lib"
   
+   ext_create_path_fixer_tool
 
    #make the new paths default active in /etc/profile
-   # But only it isn't already there
-   if   !  grep -q "ENH_PATH"  /etc/profile    ; then
-      echo "${initscript}: "
-      echo "ENH_PATH=\"$ext_linktarget/bin:$ext_linktarget/sbin/:$ext_linktarget/usr/bin:$ext_linktarget/usr/sbin\"" >> /etc/profile
-      echo "export PATH=\"\$PATH:\$ENH_PATH\"" >> /etc/profile
+    if  !  grep -q "$EXT_PATH_TOOL"  /etc/profile  ; then
+       echo "${initscript}: Including ext_path_fixer to /etc/profile"
+       echo ". $EXT_PATH_TOOL ""  >> /etc/profile 
     fi
-   
-    if  !  grep -q "ENH_LIB"  /etc/profile  ; then
-       echo "${initscript}: Fixing LD_LIBRARY_PATH"
-       echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >> /etc/profile 
-       echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >> /etc/profile
+
+    if ! grep -q  "$EXT_PATH_TOOL" /etc/rc.common ; then
+    	echo "${initscript}: Including   ext_path_fixer to /etc/rc.common 
+	sed "s|service.sh|service.sh\n\. $EXT_PATH_TOOL|" -i  /etc/rc.common
     fi
 }
+
+ext_create_path_fixer_tool(){
+	EXT_PATH_TOOL=/bin/ext_path_fixer
+	if [ ! -e $EXT_PATH_TOOL ] ; then
+	 	 echo "${initscript}: Creating $EXT_PATH_TOOL"
+		 echo "ENH_PATH=\"$ext_linktarget/bin:$ext_linktarget/sbin/:$ext_linktarget/usr/bin:$ext_linktarget/usr/sbin\"" >> $EXT_PATH_TOOL
+     	 	 echo "export PATH=\"\$PATH:\$ENH_PATH\"" >> $EXT_PATH_TOOL
+		 echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >>  $EXT_PATH_TOOL
+		 echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >>  $EXT_PATH_TOOL
+	fi
+}
+
 
 ext_enhance_opkg() {
 
   # prepare opkg for /usr/local
-  grep "^dest ext1" /etc/opkg.conf \
-      || echo "dest ext1 $ext_mountpoint" >>/etc/opkg.conf
+  grep "^dest ext" /etc/opkg.conf \
+      || echo "dest ext $ext_mountpoint" >>/etc/opkg.conf
 
 }
 
@@ -296,4 +306,7 @@ pb_undoconfig() {
   cp /rom/etc/opkg.conf /etc/
   rm /usr/local
   [ -d "$ext_mountpoint" ] && rmdir "$ext_mountpoint"
+  rm $EXT_PATH_TOOL
+  sed "s|\. $EXT_PATH_TOOL| |" -i /etc/rc.common
+  sed "s|\. $EXT_PATH_TOOL| |" -i /etc/profile
 }
