@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.0.12
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -29,10 +29,11 @@ define Package/extendRoot/postinst
 	. /etc/ext.config
 	# run initialisation only  if /tmp/ext_auto_install exists
 	if [ -e $$ext_auto_install  ] ; then
-	   echo "Doesn't run init because $$ext_auto_install exists "
-	   exit 0
+	   echo "Run init because $$ext_auto_install exists "
+	   /etc/init.d/ext init
+	   exit $$?
 	fi
-	/etc/init.d/ext init
+	exit 0
 endef
 
 define Package/extendRoot/prerm
