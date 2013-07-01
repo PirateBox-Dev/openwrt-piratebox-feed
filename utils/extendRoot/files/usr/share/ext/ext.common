@@ -278,7 +278,7 @@ ext_fix_path() {
 }
 
 ext_create_path_fixer_tool(){
-	EXT_PATH_TOOL=/bin/ext_path_fixer
+	#EXT_PATH_TOOL=/bin/ext_path_fixer
 	if [ ! -e $EXT_PATH_TOOL ] ; then
 	 	 echo "${initscript}: Creating $EXT_PATH_TOOL"
 		 echo "ENH_PATH=\"$ext_linktarget/bin:$ext_linktarget/sbin/:$ext_linktarget/usr/bin:$ext_linktarget/usr/sbin\"" >> $EXT_PATH_TOOL
