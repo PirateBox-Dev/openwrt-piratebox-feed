@@ -27,9 +27,9 @@ endef
 define Package/extendRoot/postinst
 	#!/bin/sh
 	. /etc/ext.config
-	# don't run initialisation  if /tmp/ext_no_auto_ext exists
-	if [ -e $$ext_no_install  ] ; then
-	   echo "Doesn't run init because $$ext_no_install exists "
+	# run initialisation only  if /tmp/ext_auto_install exists
+	if [ -e $$ext_auto_install  ] ; then
+	   echo "Doesn't run init because $$ext_auto_install exists "
 	   exit 0
 	fi
 	/etc/init.d/ext init
