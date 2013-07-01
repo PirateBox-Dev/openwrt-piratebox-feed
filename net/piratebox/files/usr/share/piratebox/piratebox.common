@@ -169,6 +169,7 @@ pb_undoconfig() {
 pb_mkpbimg () {
    pb_umount pb
    [ -d "$(dirname $pb_pbimg)" ] || mkdir -p "$(dirname $pb_pbimg)"
+   [ -d "$(dirname $pb_pb_srcImg)" ] || mkdir -p "$(dirname $pb_pb_srcImg)"
    if [ ! -e $pb_pb_srcImg ] ; then
       echo "${initscript}: No PirateBox Image file found... loading from Internet"
       wget -O $pb_pb_srcImg  $pb_pb_srcImg_url 
@@ -235,7 +236,7 @@ pb_start() {
   pb_mount pb
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
-  mkdir -p $pb_share    
+#  mkdir -p $pb_share    
   $pb_pbmount/init.d/piratebox_alt start
 }
 
