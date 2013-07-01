@@ -272,7 +272,7 @@ ext_fix_path() {
     fi
 
     if ! grep -q  "$EXT_PATH_TOOL" /etc/rc.common ; then
-    	echo "${initscript}: Including   ext_path_fixer to /etc/rc.common 
+    	echo "${initscript}: Including   ext_path_fixer to /etc/rc.common" 
 	sed "s|service.sh|service.sh\n\. $EXT_PATH_TOOL|" -i  /etc/rc.common
     fi
 }
@@ -285,6 +285,7 @@ ext_create_path_fixer_tool(){
      	 	 echo "export PATH=\"\$PATH:\$ENH_PATH\"" >> $EXT_PATH_TOOL
 		 echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >>  $EXT_PATH_TOOL
 		 echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >>  $EXT_PATH_TOOL
+		 chown a+x $EXT_PATH_TOOL
 	fi
 }
 
