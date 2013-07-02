@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.1.13
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -68,7 +68,7 @@ define Build/Configure
 endef
 
 
-define Package/extendRoot-python/description/postinst
+define Package/extendRoot-python/postinst
 	#!/bin/sh
 	#start the init from piratebox scripts
 	. /etc/ext.config
