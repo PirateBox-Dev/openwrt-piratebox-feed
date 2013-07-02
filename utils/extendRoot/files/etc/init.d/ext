@@ -24,6 +24,6 @@ start() {
 }
 
 stop() {
-  ext_stop
+  ext_umount swap ext usb
 }
 
