@@ -69,12 +69,12 @@ endef
 
 
 define Package/extendRoot-python/description/postinst
-        #!/bin/sh
-        #start the init from piratebox scripts
-        . /etc/ext.config
-        ln -s $$ext_linktarget/usr/bin/python /usr/bin/
-        ln -s $$ext_linktarget/usr/lib/python* /usr/lib/
-       exit 0
+	#!/bin/sh
+	#start the init from piratebox scripts
+	. /etc/ext.config
+	ln -s $$ext_linktarget/usr/bin/python /usr/bin/
+	ln -s $$ext_linktarget/usr/lib/python* /usr/lib/
+i	exit 0
 endef
 
 
@@ -88,8 +88,8 @@ endef
 
 define BuildPlugin
   define Package/$(1)/install
-        $(INSTALL_DIR) $(1)/tmp/ext
-        $(INSTALL_BIN) ./files/spacer $(1)/tmp/ext/spacer
+	$(INSTALL_DIR) $(1)/tmp/ext
+	$(INSTALL_BIN) ./files/spacer $(1)/tmp/ext/spacer
   endef
   $$(eval $$(call BuildPackage,$(1)))
 endef
