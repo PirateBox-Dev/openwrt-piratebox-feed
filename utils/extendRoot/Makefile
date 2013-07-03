@@ -20,7 +20,7 @@ endef
 define Package/extendRoot
   $(call Package/extendRoot/Default)
   DEPENDS:= +kmod-usb2 +kmod-usb-storage +kmod-fs-vfat +kmod-nls-cp437 +kmod-nls-cp850 +kmod-nls-iso8859-1 +kmod-nls-iso8859-15 +kmod-fs-ext4 +block-mount +kmod-loop +losetup 
-  Menu:=1
+  MENU:=1
 endef
 
 define Package/extendRoot/description
@@ -42,7 +42,7 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox
 endef
 
 define Package/extendRoot-piratebox/description
