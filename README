@@ -8,3 +8,18 @@ syslog_recv.py  -  simply python script for client computer,
 		   collecting installation log information.
 		   Client has to be connected via wired and fixed 
 		   	IP  192.168.1.2
+
+ installer/bin/box_installer.sh - Script doing the work , loggs to STDOUT and STDERR
+
+
+installer/bin/box_installer_start.sh   - Script launching syslog daemon and reroutes installer output to syslog-daeming.
+
+
+
+Requirements on the firmware:
+-----------------------------
+
+Package "extendRoot" installed (not initialized)
+/etc/auto_package  contains the name or the path to be the wished package
+Package "LibraryBox-Installer" (to be done)
+
