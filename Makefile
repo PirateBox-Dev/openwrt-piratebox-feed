@@ -44,7 +44,7 @@ endef
 define Package/box-installer
   $(call Package/box-installer/Default)
   DEPENDS:= +extendRoot
-  Menu:=1
+  MENU:=1
 endef
 
 define Package/box-installer/description
