@@ -1,0 +1,10 @@
+
+
+Installer script and helper stuff for an automatic installation of
+LibraryBox on OpenWRT (with special custom image).
+
+
+syslog_recv.py  -  simply python script for client computer,
+		   collecting installation log information.
+		   Client has to be connected via wired and fixed 
+		   	IP  192.168.1.2
