@@ -71,6 +71,7 @@ run_fake_opkg_update() {
 run_install_package(){
 	echo "Installing packge $INSTALL_PACKAGE "
 	$OPKG_DEST install $INSTALL_PACKAGE
+	[ $? ] || exit $?
 }
 
 # Implement and option to process single steps
