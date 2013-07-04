@@ -38,6 +38,13 @@ define Package/box-installer/install/Default
 	$(INSTALL_BIN)  ./files/bin/box_installer_start.sh  $(1)/bin
 endef
 
+define Build/Compile
+endef
+
+define Build/Configure
+endef
+
+
 #---------- Base Package
 define Package/box-installer
   $(call Package/box-installer/Default)
