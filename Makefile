@@ -66,7 +66,7 @@ define Package/box-installer/prerm
 endef
 
 define Package/box-installer/install
-  $(call Package/box-installer/install/Default)
+  $(call Package/box-installer/install/Default,$(1))
 endef
 
 #------------------
