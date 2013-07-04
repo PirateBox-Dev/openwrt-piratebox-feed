@@ -109,7 +109,7 @@ define Package/extendRoot-lighttpd/postinst
 	#!/bin/sh
 	#start the init from piratebox scripts
 	. /etc/ext.config
-	ln -s $$ext_linktarget/sbin/lighttpd  /usr/sbin/lighttpd
+	ln -s $$ext_linktarget/usr/sbin/lighttpd  /usr/sbin/lighttpd
     	ln -s $$ext_linktarget/usr/lib/lighttpd  /usr/lib/lighttpd
 	ln -s $$ext_linktarget/etc/init.d/lighttpd /etc/init.d/lighttpd
 	exit 0
