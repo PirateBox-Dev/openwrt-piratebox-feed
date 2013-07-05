@@ -14,7 +14,6 @@ files/bin/box_installer.sh - Script doing the work , loggs to STDOUT and STDERR
 files/bin/box_installer_start.sh   - Script launching syslog daemon and reroutes installer output to syslog-daeming.
 
 
-
 Requirements on the firmware:
 -----------------------------
 
@@ -32,5 +31,15 @@ On the USB Stick has to be located:
 		 /cache		- folder containing all needed .ipk files
 		        /Package.gz_attitude_adjustment  - Package-List from public repository
 		   	/Package.gz_piratebox	- Package-List from PirateBox repository (optional)
+
+
+What happens
+-------------
+During bootup, the box_installer_start.sh initiates the startup of the USB initialization, if extendRoot is not enabled at boot-time.
+After extendRoot gets init, the script polls until a USB stick gets available.
+On the further progress, it lookups on the install-folder for auto_package and installs that package(s) listed at the first line.
+After everthing is done (valid or not), auto_package is renamed into auto_package_done (to prevent infinitive tries).
+
+On a later start of the script, extendRoot does not get initialized anymore, so that would enable you to install additional packages later (maybe....).
 
 
