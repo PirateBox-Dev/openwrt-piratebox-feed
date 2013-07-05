@@ -3,16 +3,16 @@
 Installer script and helper stuff for an automatic installation of
 LibraryBox on OpenWRT (with special custom image).
 
+Makefile	-  OpenWRT Makefile for package creation
+
 
 syslog_recv.py  -  simply python script for client computer,
 		   collecting installation log information.
 		   Client has to be connected via wired and fixed 
 		   	IP  192.168.1.2
 
- installer/bin/box_installer.sh - Script doing the work , loggs to STDOUT and STDERR
-
-
-installer/bin/box_installer_start.sh   - Script launching syslog daemon and reroutes installer output to syslog-daeming.
+files/bin/box_installer.sh - Script doing the work , loggs to STDOUT and STDERR
+files/bin/box_installer_start.sh   - Script launching syslog daemon and reroutes installer output to syslog-daeming.
 
 
 
@@ -20,6 +20,18 @@ Requirements on the firmware:
 -----------------------------
 
 Package "extendRoot" installed (not initialized)
-/etc/auto_package  contains the name or the path to be the wished package
-Package "LibraryBox-Installer" (to be done)
+Package "box-Installer" 
+
+Further Requirments.
+--------------------
+On the USB Stick has to be located:
+
+<USB Stick>/installer		- Contains
+		/auto_package	- One lined file with the packages needed to be installed after bootup
+		/OpenWRT.img.gz - (prepared) ext3-image file
+		/<packageimg>	- Stuff that needed by 'box packge 
+		 /cache		- folder containing all needed .ipk files
+		        /Package.gz_attitude_adjustment  - Package-List from public repository
+		   	/Package.gz_piratebox	- Package-List from PirateBox repository (optional)
+
 

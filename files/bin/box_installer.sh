@@ -3,7 +3,7 @@
 #   Auto Install script for LibraryBox.
 #     Installs the one listed package from auto_package to ext-install
 
-INSTALL_PACKAGE=`cat /etc/auto_package`
+INSTALL_PACKAGE=`head -n 1 /mnt/usb/install/auto_package`
 
 CACHE_LOCATION="/mnt/usb/install/cache"
 INSTALL_DESTINATION="-d ext"

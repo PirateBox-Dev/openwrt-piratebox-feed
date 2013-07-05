@@ -2,12 +2,12 @@
 
 # Initiates the log facility and starts the installation
 
-if [ ! -e /etc/auto_install_done ] ; then
+if [  -e /mnt/usb/install/auto_package ] ; then
 	syslogd -L -R 192.168.1.2:9999
 	/bin/box_installer.sh 2>&1 | logger 
 	# create the file always
-	touch /etc/auto_install_done
+	mv /mnt/usb/install/auto_package  /mnt/usb/install/auto_package_done
 else
-	echo "not running auto installation because  /etc/auto_install_done exists"
+	echo "Does not run because /mnt/usb/install/auto_package  does not exists"
 fi
 
