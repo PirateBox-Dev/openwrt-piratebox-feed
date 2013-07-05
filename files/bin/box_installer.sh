@@ -3,7 +3,7 @@
 #   Auto Install script for LibraryBox.
 #     Installs the one listed package from auto_package to ext-install
 
-INSTALL_PACKAGE=`head -n 1 /mnt/usb/install/auto_package`
+INSTALL_PACKAGE_FILE=/mnt/usb/install/auto_package
 
 CACHE_LOCATION="/mnt/usb/install/cache"
 INSTALL_DESTINATION="-d ext"
@@ -54,6 +54,10 @@ run_prepare_extendRoot(){
 }
 
 run_init_extendRoot() {
+	if [ /etc/init.d/ext enabled ] ; then
+		echo "not running extendRoot init, because it already is"
+		exit 0
+	fi
 	/etc/init.d/ext init
 	[ $? ] || exit $?
 	echo "Fixing paths"
@@ -69,6 +73,7 @@ run_fake_opkg_update() {
 }
 
 run_install_package(){
+	INSTALL_PACKAGE=`head -n 1 $INSTALL_PACKAGE_FILE`
 	echo "Installing packge $INSTALL_PACKAGE "
 	$OPKG_DEST install $INSTALL_PACKAGE
 	[ $? ] || exit $?
