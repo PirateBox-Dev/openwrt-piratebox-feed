@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.1.13
-PKG_RELEASE:=3
+PKG_VERSION:=0.1.14
+PKG_RELEASE:=1
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -96,6 +96,9 @@ define Package/extendRoot-python/postinst
 	. /etc/ext.config
 	ln -s $$ext_linktarget/usr/bin/python /usr/bin/
 	ln -s $$ext_linktarget/usr/lib/python* /usr/lib/
+	if [ ! -e /lib/libc.so.6 ] ; then
+		ln /lib/libc.so.0 /lib/libc.so.6
+	fi
 	exit 0
 endef
 
