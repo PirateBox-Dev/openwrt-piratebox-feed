@@ -1,9 +1,8 @@
 
-
 Installer script and helper stuff for an automatic installation of
 LibraryBox on OpenWRT (with special custom image).
 
-Makefile	-  OpenWRT Makefile for package creation
+Makefile	-  OpenWRT Makefile for box-installer package creation
 
 
 syslog_recv.py  -  simply python script for client computer,
