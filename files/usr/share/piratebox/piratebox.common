@@ -15,12 +15,11 @@ fi
 pb_setup() {
 
   pb_netconfig 
-  
-### needs to be done until there are extra packages which do this stuff in their postinst section
-  ln -s /usr/local/usr/bin/python /usr/bin/
-  # LIGHTTPD Stuff ### is only needed 
-  ln -s /usr/local/usr/sbin/lighttpd  /usr/sbin/lighttpd 
-  ln -s /usr/local/usr/lib/lighttpd  /usr/lib/lighttpd 
+ 
+  if [ "$pb_enable_USB_auto_config" = "true" ] ; then
+  	. /usr/share/piratebox/autoconfig.common
+	auto_config_init
+  fi
 
    touch $pb_inst_done
 }
@@ -112,6 +111,11 @@ pb_generateHostname() {
   pb_random_hostname="$suffix.$pb_hostname"
 }
 
+pb_setSSID() {
+    local ssid=$1 ; shift
+    uci set "wireless.@wifi-iface[0].ssid=$ssid"
+}
+
 
  # reconfigure network
 pb_netconfig() {
@@ -141,8 +145,11 @@ pb_netconfig() {
   uci set "network.lan.proto=static"
   #CAVE: wireless config might be platform specific
   uci set "wireless.radio0.disabled=0"
-  uci set "wireless.@wifi-iface[0].ssid=$pb_wireless_ssid"
-  uci commit
+  uci set "wireless.radio0.txpower=25"
+
+  pb_setSSID $pb_wireless_ssid
+
+   uci commit
    
    # activate config changes
    /etc/init.d/firewall restart
