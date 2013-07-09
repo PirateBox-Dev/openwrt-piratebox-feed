@@ -1,29 +1,30 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=piratebox
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=3
+PKG_NAME:=librarybox
+PKG_VERSION:=2.0.0
+PKG_RELEASE:=1
 
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/piratebox
+define Package/librarybox
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=PirateBox-Main package
+  TITLE:=LibraryBox-Main package
   SUBMENU:=PirateBox
-  URL:=http://piratebox.aod-rpg.de
+  URL:=http://www.librarybox.us
   DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
 
-define Package/piratebox/description
-	Turns your OpenWRT Router into a PirateBox; see http://www.daviddarts.com
+define Package/librarybox/description
+	Turns your OpenWRT Router into a LibraryBox; see http://www.librarybox.us
+	LibraryBox is a PirateBox Fork
 endef
 
 
-define Package/piratebox/postinst
+define Package/librarybox/postinst
 	#!/bin/sh
 	##------ Preparerations for /mnt/ext dependencies
 	if [ ! -e /etc/init.d/piratebox ] ; then
@@ -129,4 +130,4 @@ define Package/piratebox/install
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox $(1)/etc/init.d/piratebox
 endef
 
-$(eval $(call BuildPackage,piratebox))
+$(eval $(call BuildPackage,librarybox))
