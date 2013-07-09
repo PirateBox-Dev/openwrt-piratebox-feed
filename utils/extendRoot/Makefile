@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.1.14
+PKG_VERSION:=0.3.0
 PKG_RELEASE:=1
 
 
@@ -45,6 +45,18 @@ define Package/extendRoot-piratebox
    DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox
 endef
 
+define Package/extendRoot-librarybox
+   $(call Package/extendRoot/Default)
+   TITLE:=LibraryBox on extendRoot
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php
+endef
+
+define Package/extendRoot-php
+   $(call Package/extendRoot/Default)
+   TITLE:=PHP on extendRoot
+   DEPENDS:= +php +php-cgi
+endef
+
 define Package/extendRoot-piratebox/description
    not valid as a direct install on root. 
    run opkg -d ext install extendRoot-piratebox
@@ -62,6 +74,13 @@ define Package/extendRoot-lighttpd/description
    not valid as a direct install on root.
    if you install extendRoot-python to your installaiton destiniation, it does everything needed to link the needed files to the places needed by
    the dependend package
+endef
+
+define Package/extendRoot-librarybox/description
+	not valid as a direct install on root
+endef
+define Package/extendRoot-php/description
+	not valid as a direct install on root
 endef
 
 define Package/extendRoot/postinst
@@ -123,7 +142,22 @@ define Package/extendRoot-lighttpd/prerm
 	rm /usr/lib/lighttpd
 	rm /etc/init.d/lighttpd
 endef
- 
+
+define Package/extendRoot-php/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/php.ini /etc
+	ln -s $$ext_linktarget/etc/php5 /etc
+	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
+	#disable that security feature :/
+	sed  's,doc_root,;doc_root,' -i /etc/php.ini
+endef
+define Package/extendRoot-php/prerm
+	#!/bin/sh
+	rm /etc/php.ini
+	rm /etc/php5
+endef
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -144,3 +178,5 @@ $(eval $(call BuildPackage,extendRoot))
 $(eval $(call BuildPlugin,extendRoot-python))
 $(eval $(call BuildPlugin,extendRoot-lighttpd))
 $(eval $(call BuildPlugin,extendRoot-piratebox))
+$(eval $(call BuildPlugin,extendRoot-php))
+$(eval $(call BuildPlugin,extendRoot-librarybox))
