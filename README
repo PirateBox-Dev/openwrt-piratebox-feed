@@ -12,7 +12,7 @@ syslog_recv.py  -  simply python script for client computer,
 
 files/bin/box_installer.sh - Script doing the work , loggs to STDOUT and STDERR
 files/bin/box_installer_start.sh   - Script launching syslog daemon and reroutes installer output to syslog-daeming.
-
+files/bin/box_init_setup.sh  - Script for a simple user menu setting time & password
 
 Requirements on the firmware:
 -----------------------------
