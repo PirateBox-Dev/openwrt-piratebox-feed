@@ -115,9 +115,6 @@ define Package/extendRoot-python/postinst
 	. /etc/ext.config
 	ln -s $$ext_linktarget/usr/bin/python /usr/bin/
 	ln -s $$ext_linktarget/usr/lib/python* /usr/lib/
-	if [ ! -e /lib/libc.so.6 ] ; then
-		ln /lib/libc.so.0 /lib/libc.so.6
-	fi
 	exit 0
 endef
 
