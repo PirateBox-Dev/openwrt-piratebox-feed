@@ -54,7 +54,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:= +php +php-cgi
+   DEPENDS:= +php +php-cli +php-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip
 endef
 
 define Package/extendRoot-piratebox/description
@@ -81,6 +81,7 @@ define Package/extendRoot-librarybox/description
 endef
 define Package/extendRoot-php/description
 	not valid as a direct install on root
+	Installs PHP with a huge bundle of modules
 endef
 
 define Package/extendRoot/postinst
@@ -148,6 +149,16 @@ define Package/extendRoot-php/postinst
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
 	sed  's,doc_root,;doc_root,' -i /etc/php.ini
+	sed  's,;extension=gd.so,extension=gd.so,g' -i /etc/php.ini
+        sed  's,;extension=json.so,extension=json.so,g' -i /etc/php.ini
+	sed  's,;extension=dom.so,extension=dom.so,g' -i /etc/php.ini
+	sed  's,;extension=pdo.so,extension=pdo.so,g' -i /etc/php.ini
+	sed  's,;extension=pdo_sqlite.so,extension=pdo_sqlite.so,g' -i /etc/php.ini
+	sed  's,;extension=sqlite.so,extension=sqlite.so,g' -i /etc/php.ini
+	sed  's,;extension=sqlite3.so,extension=sqlite3.so,g' -i /etc/php.ini
+	sed  's,;extension=xml.so,extension=xml.so,g' -i /etc/php.ini
+	sed  's,;extension=xmlreader.so,extension=xmlreader.so,g' -i /etc/php.ini
+	sed  's,;extension=xmlwriter.so,extension=xmlwriter.so,g' -i /etc/php.ini
 endef
 define Package/extendRoot-php/prerm
 	#!/bin/sh
