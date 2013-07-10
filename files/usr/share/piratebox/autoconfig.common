@@ -45,10 +45,7 @@ auto_config_export_form_uci(){
 }
 
 auto_config_transfer_config() {
-    cp $oa_current_config_ssid $oa_new_config_ssid
-    cp $oa_current_config_txpower $oa_new_config_txpower
-    cp $oa_current_config_channel $oa_new_config_channel
-    cp $oa_current_config_hostname $oa_new_config_hostname
+	cp $oa_current_config/* $oa_config
 }
 
 auto_config_uci_export(){
