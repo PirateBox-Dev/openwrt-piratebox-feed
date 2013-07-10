@@ -55,6 +55,14 @@ _set_date_() {
 	else
 		echo "$cmd"
 	fi
+	# If timesave script is available, and it is not already installed, install it.
+	if [ -e /opt/piratebox/timesave.sh ] ; then
+		if  ! grep -q timesave.sh /etc/crontab  ; then
+			/opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf install
+		else
+			 /opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf save
+		fi
+	fi
 }
 
 mainmenu
