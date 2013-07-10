@@ -21,6 +21,8 @@ auto_config_init() {
    echo 'cat ' "$pb_usbdir/tmp_apply_config.log"' >> ' "$pb_usbdir/apply_config.log"   >> /etc/rc.local
    echo 'rm  '"$pb_usbdir/tmp_apply_config.log"          >> /etc/rc.local
 
+   #Fill up USB config folder
+   auto_config_export_form_uci && auto_config_transfer_config
 }
 
 
