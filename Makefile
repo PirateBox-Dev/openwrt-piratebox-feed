@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=2
+PKG_RELEASE:=4
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -33,6 +33,10 @@ define Package/librarybox/postinst
 
 	if [ ! -e /etc/piratebox.config ] ; then
 	   ln -s $$PKG_ROOT/etc/piratebox.config /etc
+	fi
+
+	if [ ! -e /etc/auto.config ] ; then
+	   ln -s $$PKG_ROOT/etc/auto.config /etc
 	fi
 
 	# include PirateBox shared functionality
