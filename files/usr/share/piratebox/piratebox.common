@@ -249,3 +249,8 @@ pb_stop() {
   pb_umount pb
 }
 
+pb_stop_and_keep(){
+   $pb_pbmount/init.d/piratebox_alt stop
+}
+
+
