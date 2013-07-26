@@ -54,7 +54,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:= +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip
+   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip
 endef
 
 define Package/extendRoot-piratebox/description
