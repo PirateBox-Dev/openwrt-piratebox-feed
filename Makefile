@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -104,7 +104,7 @@ define Package/librarybox/postinst
 	echo "Done"
 endef
 
-define Package/piratebox/preinst
+define Package/librarybox/preinst
 	#!/bin/sh
 	#Disable Piratebox, it it seems that it is installed
 	if [ -e  /etc/init.d/piratebox  ] ; then
@@ -121,7 +121,7 @@ define Build/Configure
 endef
 
 
-define Package/piratebox/install
+define Package/librarybox/install
 	$(INSTALL_DIR) $(1)/usr/share/piratebox
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
