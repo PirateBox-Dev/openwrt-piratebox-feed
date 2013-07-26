@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -110,6 +110,11 @@ define Package/piratebox/preinst
 	   /etc/init.d/piratebox stop
 	fi
 
+	if [ -z $$PKG_ROOT ] ; then
+		echo "Attention, since package piratebox version 1.0, piratebox needs to be installed on installation destination "ext", which is created by the package extendRoot. See http://piratebox.aod-rpg.de for more informations"
+		echo " ... " && sleep 2
+		echo " ... " && sleep 2
+	fi
 	exit 0
 endef
 
