@@ -183,12 +183,14 @@ define Package/extendRoot-php-fastcgi/postinst
 	. /etc/ext.config
 	ln -s  $$ext_linktarget/etc/config/php5-fastcgi /etc/config/
 	ln -s  $$ext_linktarget/etc/init.d/php5-fastcgi /etc/init.d/
+	ln -s  $$ext_linktarget/usr/local/usr/bin/php-fcgi /usr/bin/
 endef
 
 define Package/extendRoot-php-fastcgi/prerm
 	#!/bin/sh
 	rm  /etc/config/php5-fastcgi
 	rm  /etc/init.d/php5-fastcgi
+	rm  /usr/bin/php-fcgi 
 define
 
 define Package/extendRoot/install
