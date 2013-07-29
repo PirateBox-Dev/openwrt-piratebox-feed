@@ -28,7 +28,7 @@ else
 fi
 
 setup() {
-  pb_netconfig
+  pb_setup
 }
 
 init() {
