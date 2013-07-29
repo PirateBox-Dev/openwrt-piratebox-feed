@@ -13,7 +13,7 @@ define Package/librarybox
   TITLE:=LibraryBox-Main package
   SUBMENU:=PirateBox
   URL:=http://www.librarybox.us
-  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php5-fastcgi 
+  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi  
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
@@ -70,12 +70,6 @@ define Package/librarybox/postinst
 	if [ -e /etc/init.d/watchdog ] ; then
 		/etc/init.d/watchdog stop
 		/etc/init.d/watchdog disable
-	fi
-
-        #echo Enable fast-cgi server
-	if [ ! `/etc/init.d/php5-fastcgi enabled` ]; then
-		/etc/init.d/php5-fastcgi enable
-		/etc/init.d/php5-fastcgi start
 	fi
 
 	##only do network config etc, when first install
