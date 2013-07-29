@@ -48,13 +48,19 @@ endef
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-php-fastcgi
 endef
 
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
    DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip
+endef
+
+define Package/extendRoot-php-fastcgi
+    $(call Package/extendRoot/Default)
+    TITLE:=PHP-fastcgi server on extendRoot
+    DEPENDS:=extendRoot  +php5 +php5-fastcgi
 endef
 
 define Package/extendRoot-piratebox/description
@@ -79,9 +85,15 @@ endef
 define Package/extendRoot-librarybox/description
 	not valid as a direct install on root
 endef
+
 define Package/extendRoot-php/description
 	not valid as a direct install on root
 	Installs PHP with a huge bundle of modules
+endef
+
+define Package/extendRoot-php-fastcgi/description
+ 	not valid as a direct install on root
+	Installs fastcgi-php 
 endef
 
 define Package/extendRoot/postinst
@@ -166,6 +178,19 @@ define Package/extendRoot-php/prerm
 	rm /etc/php5
 endef
 
+define Package/extendRoot-php-fastcgi/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s  $$ext_linktarget/etc/config/php5-fastcgi /etc/config/
+	ln -s  $$ext_linktarget/etc/init.d/php5-fastcgi /etc/init.d/
+endef
+
+define Package/extendRoot-php-fastcgi/prerm
+	#!/bin/sh
+	rm  /etc/config/php5-fastcgi
+	rm  /etc/init.d/php5-fastcgi
+define
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -187,4 +212,5 @@ $(eval $(call BuildPlugin,extendRoot-python))
 $(eval $(call BuildPlugin,extendRoot-lighttpd))
 $(eval $(call BuildPlugin,extendRoot-piratebox))
 $(eval $(call BuildPlugin,extendRoot-php))
+$(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
