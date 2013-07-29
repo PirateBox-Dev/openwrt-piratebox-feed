@@ -173,6 +173,7 @@ define Package/extendRoot-php/postinst
 	sed  's,;extension=xmlreader.so,extension=xmlreader.so,g' -i /etc/php.ini
 	sed  's,;extension=xmlwriter.so,extension=xmlwriter.so,g' -i /etc/php.ini
 endef
+
 define Package/extendRoot-php/prerm
 	#!/bin/sh
 	rm /etc/php.ini
@@ -193,7 +194,7 @@ define Package/extendRoot-php-fastcgi/prerm
 	rm  /etc/config/php5-fastcgi
 	rm  /etc/init.d/php5-fastcgi
 	rm  /usr/bin/php-fcgi 
-define
+endef
 
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
