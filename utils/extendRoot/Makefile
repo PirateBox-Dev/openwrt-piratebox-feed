@@ -48,7 +48,7 @@ endef
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-php-fastcgi
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php 
 endef
 
 define Package/extendRoot-php
@@ -158,6 +158,7 @@ define Package/extendRoot-php/postinst
 	. /etc/ext.config
 	ln -s $$ext_linktarget/etc/php.ini /etc
 	ln -s $$ext_linktarget/etc/php5 /etc
+	ln -s $$ext_linktarget/usr/bin/php-cgi /usr/bin/
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
 	sed  's,doc_root,;doc_root,' -i /etc/php.ini
@@ -176,6 +177,7 @@ define Package/extendRoot-php/prerm
 	#!/bin/sh
 	rm /etc/php.ini
 	rm /etc/php5
+	rm /usr/bin/php-cgi
 endef
 
 define Package/extendRoot-php-fastcgi/postinst
