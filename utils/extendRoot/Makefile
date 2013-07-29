@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.3.0
+PKG_VERSION:=0.4.0
 PKG_RELEASE:=1
 
 
@@ -48,7 +48,7 @@ endef
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo 
 endef
 
 define Package/extendRoot-php
@@ -61,6 +61,12 @@ define Package/extendRoot-php-fastcgi
     $(call Package/extendRoot/Default)
     TITLE:=PHP-fastcgi server on extendRoot
     DEPENDS:=extendRoot  +php5 +php5-fastcgi
+endef
+
+define Package/extendRoot-zoneinfo
+    $(call Package/extendRoot/Default)
+    TITLE:=zoneinfo-core for PHP applications on extendRoot
+    DEPENDS:=+zoneinfo-core 
 endef
 
 define Package/extendRoot-piratebox/description
@@ -94,6 +100,11 @@ endef
 define Package/extendRoot-php-fastcgi/description
  	not valid as a direct install on root
 	Installs fastcgi-php 
+endef
+
+define Package/extendRoot-zoneinfo/description
+	not valid as direct isntall on root
+	Installs zoneinfo to extend root and links needed folder
 endef
 
 define Package/extendRoot/postinst
@@ -196,6 +207,19 @@ define Package/extendRoot-php-fastcgi/prerm
 	rm  /usr/bin/php-fcgi 
 endef
 
+
+define Package/extendRoot-zoneinfo/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	mkdir -p /usr/share
+	ln -s $$ext_linktarget/usr/share/zoneinfo /usr/share
+endef	
+
+define Package/extendRoot-zoneinfo/prerm
+	#!/bin/sh
+	rm /usr/share/zoneinfo
+endef
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -218,4 +242,5 @@ $(eval $(call BuildPlugin,extendRoot-lighttpd))
 $(eval $(call BuildPlugin,extendRoot-piratebox))
 $(eval $(call BuildPlugin,extendRoot-php))
 $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
+$(eval $(call BuildPlugin,extendRoot-zoneinfo))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
