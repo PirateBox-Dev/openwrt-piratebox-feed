@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=7
+PKG_RELEASE:=8
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -13,7 +13,7 @@ define Package/librarybox
   TITLE:=LibraryBox-Main package
   SUBMENU:=PirateBox
   URL:=http://www.librarybox.us
-  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php5-cgi 
+  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-sqlite3 +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-pdo 
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
