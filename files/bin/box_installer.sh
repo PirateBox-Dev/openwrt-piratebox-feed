@@ -23,31 +23,31 @@ calc_next_step() {
 	 'run_init_extendRoot') NEXT_STEP="run_fake_opkg_update" ;;
 	 'run_fake_opkg_update') NEXT_STEP="run_install_package" ;;
 	 'run_install_package') NEXT_STEP="exit" ;;
-	 *) echo "unknown previous step..exiting"
+	 *) echo "$0 : unknown previous step..exiting"
 	    exit 255 ;;
 	esac
 }
 
 run_test() {
 	#This section includes some tests to ensure everything is as we need it
-	echo "Testing requirements..."
+	echo "$0 : Testing requirements..."
 	if   lsmod | grep -q usb_storage ; then
-		echo ".. USB storage modules available"
+		echo "$0 : .. USB storage modules available"
 	else
-		echo "No usb-storage storage modules detected..exit"
+		echo "$0 : No usb-storage storage modules detected..exit"
 		exit 255
 	fi
 	if opkg list-installed extendRoot | grep -q extendRoot ; then
-		echo "extendRoot package is installed"
+		echo "$0 : extendRoot package is installed"
 	else
-		echo "extendRoot not available, exiting"
+		echo "$0 : extendRoot not available, exiting"
 		exit 255
 	fi
 }
 
 run_prepare_extendRoot(){
 	#sets flags for installation of extendRoot to prevent the package asking the user
-	echo "configure initi step for extendRoot"
+	echo "$0 : configure initi step for extendRoot"
 	. /etc/ext.config
 	touch  $ext_force_ext_overwrite
 	[ $? ] || exit $?
@@ -55,26 +55,33 @@ run_prepare_extendRoot(){
 
 run_init_extendRoot() {
 	if [ /etc/init.d/ext enabled ] ; then
-		echo "not running extendRoot init, because it already is"
+		echo "$0 : not running extendRoot init, because it already is"
 		exit 0
 	fi
 	/etc/init.d/ext init
 	[ $? ] || exit $?
-	echo "Fixing paths"
+	echo "$0 : Fixing paths"
 	/bin/ext_path_fixer
 }
 
 run_fake_opkg_update() {
-	echo "Doing fake opkg update (copy from cache folder (AA)"
+	echo "$0 : Doing fake opkg update (copy from cache folder (AA)"
 	cp $CACHE_LOCATION/Package.gz_attitude_adjustment /var/opkg-lists/attitude_adjustment
 	[ $? ] || exit $?
-	echo ".. doing it for Piratebox repository (optional)"
+	echo "$0 : .. doing it for Piratebox repository (optional)"
 	cp $CACHE_LOCATION/Package.gz_piratebox /var/opkg-lists/piratebox
 }
 
 run_install_package(){
+	# This can only happen if extendRoot is not initialized 
+	#  and the auto-install file is not on the USB Stick
+	if [ ! -e $INSTALL_PACKAGE_FILE ] ; then
+		echo "$0 : ERROR: $INSTALL_PACKAGE_FILE is not set"
+		exit 255
+	fi
+
 	INSTALL_PACKAGE=`head -n 1 $INSTALL_PACKAGE_FILE`
-	echo "Installing packge $INSTALL_PACKAGE "
+	echo "$0 : Installing packge $INSTALL_PACKAGE "
 	$OPKG_DEST install $INSTALL_PACKAGE
 	[ $? ] || exit $?
 }
@@ -86,20 +93,15 @@ if [ ! -z $1 ] ; then
 	NEXT_STEP="$1"
 fi
 
-if [ ! -e $INSTALL_PACKAGE_FILE ] ; then
-	echo "ERROR: $INSTALL_PACKAGE_FILE is not set"
-	exit 255
-fi
-
 while true; do
-    echo "executing $NEXT_STEP"
+    echo "$0 : executing $NEXT_STEP"
     $NEXT_STEP
 
     if [ "$ALL_STEPS" = "yes" ] ; then
-    	echo "Trying to find next step"
+    	echo "$0 : Trying to find next step"
 	calc_next_step 
     else
-    	echo "exiting because we run only one step"
+    	echo "$0 : exiting because we run only one step"
     	exit $?
     fi
 done
