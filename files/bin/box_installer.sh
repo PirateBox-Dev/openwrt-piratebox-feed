@@ -86,8 +86,8 @@ if [ ! -z $1 ] ; then
 	NEXT_STEP="$1"
 fi
 
-if [ ! -e /etc/auto_package ] ; then
-	echo "ERROR: /etc/auto_package is not set"
+if [ ! -e $INSTALL_PACKAGE_FILE ] ; then
+	echo "ERROR: $INSTALL_PACKAGE_FILE is not set"
 	exit 255
 fi
 
