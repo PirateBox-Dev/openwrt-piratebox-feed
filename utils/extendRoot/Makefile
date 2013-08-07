@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.4.0
+PKG_VERSION:=0.5.0
 PKG_RELEASE:=1
 
 
@@ -69,6 +69,13 @@ define Package/extendRoot-zoneinfo
     DEPENDS:=+zoneinfo-core 
 endef
 
+define Package/extendRoot-proftpd
+	$(call Package/extendRoot/Default)
+	 TITLE:=proftpd server on extendRoot
+	 DEPENDS:=extendRoot
+endef
+
+
 define Package/extendRoot-piratebox/description
    not valid as a direct install on root. 
    run opkg -d ext install extendRoot-piratebox
@@ -105,6 +112,11 @@ endef
 define Package/extendRoot-zoneinfo/description
 	not valid as direct isntall on root
 	Installs zoneinfo to extend root and links needed folder
+endef
+
+define Package/extendRoot-proftpd/description
+	not valid as direct isntall on root
+	Installs proftpd to extend root and links needed folder
 endef
 
 define Package/extendRoot/postinst
@@ -208,6 +220,7 @@ define Package/extendRoot-php-fastcgi/prerm
 endef
 
 
+
 define Package/extendRoot-zoneinfo/postinst
 	#!/bin/sh
 	. /etc/ext.config
@@ -218,6 +231,25 @@ endef
 define Package/extendRoot-zoneinfo/prerm
 	#!/bin/sh
 	rm /usr/share/zoneinfo
+endef
+
+define Package/extendRoot-proftpd/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/proftpd.conf /etc
+	ln -s $$ext_linktarget/etc/init.d/proftpd /etc/init.d
+	ln -s $$ext_linktarget/usr/sbin/proftpd /usr/sbin
+	ln -s $$ext_linktarget/usr/sbin/ftpshut /usr/sbin
+	ln -s $$ext_linktarget/usr/sbin/in.proftpd /usr/sbin
+endef
+
+define Package/extendRoot-proftpd/prerm
+	#!/bin/sh
+        rm /etc/proftpd.conf
+	rm /etc/init.d/proftpd 
+	rm /usr/sbin/proftpd 
+	rm /usr/sbin/ftpshut
+	rm /usr/sbin/in.proftpd 
 endef
 
 define Package/extendRoot/install
@@ -244,3 +276,5 @@ $(eval $(call BuildPlugin,extendRoot-php))
 $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-zoneinfo))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
+$(eval $(call BuildPlugin,extendRoot-proftpd))
+
