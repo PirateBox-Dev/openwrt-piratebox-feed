@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=9
+PKG_RELEASE:=10
 
 
 include $(INCLUDE_DIR)/package.mk
