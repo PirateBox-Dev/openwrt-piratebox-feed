@@ -5,19 +5,20 @@
 ##      - Date & Time with userinput
 ##            => initialize timesave script if available.
 
-DEBUG=1
+DEBUG=0
+TIMESAVE_SCRIPT="/opt/piratebox/bin/timesave.sh"
 
 mainmenu() {
 
 	while  true  
 	do
 		echo "-------------------------------------"
-		echo \n
+		echo " " 
 		echo "   1 - Setting password and enable SSH"
 		echo "   2 - Set date & time (enable timesave)"
-		echo \n
+		echo " "
 		echo " Everything else causes an exit"
-		echo \n
+		echo " "
 		read -p " Choose an option: " option
 
 		case $option in 
@@ -33,7 +34,7 @@ _set_password_() {
 
 	echo "Please enter your password. The following command won't show you the entered letters."
 	local cmd=passwd
-	if [ ! $DEBUG ] ; then
+	if  ! $DEBUG  ; then
 		$cmd  && echo "$? ....OK" 
 	else
 		echo "$cmd"
@@ -50,17 +51,17 @@ _set_date_() {
 	read -p "Please enter your time in the format  HHMM : " time_
 	datetime="$year""$time_"
 	local cmd="date $datetime"
-	if [ ! $DEBUG ] ; then 
+	if  ! $DEBUG  ; then 
 		$cmd && echo "... OK"
 	else
 		echo "$cmd"
 	fi
 	# If timesave script is available, and it is not already installed, install it.
-	if [ -e /opt/piratebox/timesave.sh ] ; then
+	if [ -e $TIMESAVE_SCRIPT ] ; then
 		if  ! grep -q timesave.sh /etc/crontab  ; then
-			/opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf install
+			 $TIMESAVE_SCRIPT  /opt/piratebox/conf/piratebox.conf install
 		else
-			 /opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf save
+			 $TIMESAVE_SCRIPT  /opt/piratebox/conf/piratebox.conf save
 		fi
 	fi
 }
