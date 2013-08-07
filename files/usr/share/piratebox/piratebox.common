@@ -193,6 +193,9 @@ pb_init() {
 
   echo "${initscript}: Creating piratebox loop image..."
   pb_mkpbimg
+
+  echo "${initscrip}: Fixing timezone in php config..."
+  sed 's|;date.timezone =|date.timezone = UTC|' -i /etc/php.ini
  
 }
 
