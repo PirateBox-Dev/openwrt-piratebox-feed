@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.5.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -13,7 +13,7 @@ define Package/extendRoot/Default
   TITLE:=extendRoot
   URL:=http://piratebox.aod-rpg.de/dokuwiki/doku.php/extendRoot
   PKGARCH:=all
-  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rgp.de>
+  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 #  SUBMENU:=
 endef
 
@@ -39,11 +39,18 @@ define Package/extendRoot-lighttpd
   DEPENDS:=extendRoot +lighttpd
 endef
 
+define Package/extendRoot-piratebox-beta
+   $(call Package/extendRoot/Default)
+   TITLE:=PirateBox on extendRoot against Beta repository
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox-beta
+endef
+
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
    DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox
 endef
+
 
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
@@ -272,6 +279,7 @@ $(eval $(call BuildPackage,extendRoot))
 $(eval $(call BuildPlugin,extendRoot-python))
 $(eval $(call BuildPlugin,extendRoot-lighttpd))
 $(eval $(call BuildPlugin,extendRoot-piratebox))
+$(eval $(call BuildPlugin,extendRoot-piratebox-beta))
 $(eval $(call BuildPlugin,extendRoot-php))
 $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-zoneinfo))
