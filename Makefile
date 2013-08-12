@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=box-installer
-PKG_VERSION:=0.0.3
+PKG_VERSION:=0.1.5
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -34,6 +34,7 @@ endef
 
 define Package/box-installer/install/Default
 	$(INSTALL_DIR)  $(1)/bin
+	$(INSTALL_BIN)  ./files/bin/box_init_setup.sh $(1)/bin
 	$(INSTALL_BIN)  ./files/bin/box_installer.sh $(1)/bin
 	$(INSTALL_BIN)  ./files/bin/box_installer_start.sh  $(1)/bin
 endef
