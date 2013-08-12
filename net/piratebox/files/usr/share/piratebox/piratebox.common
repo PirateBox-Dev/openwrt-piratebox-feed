@@ -16,12 +16,6 @@ pb_setup() {
 
   pb_netconfig 
   
-### needs to be done until there are extra packages which do this stuff in their postinst section
-  ln -s /usr/local/usr/bin/python /usr/bin/
-  # LIGHTTPD Stuff ### is only needed 
-  ln -s /usr/local/usr/sbin/lighttpd  /usr/sbin/lighttpd 
-  ln -s /usr/local/usr/lib/lighttpd  /usr/lib/lighttpd 
-
    touch $pb_inst_done
 }
 
@@ -153,15 +147,9 @@ pb_netconfig() {
 
 pb_undoconfig() {
   # undo config changes
-  uci delete dhcp.piratebox
-  uci delete firewall.piratebox
   uci delete fstab.pirateimage
-  uci set "system.@system[0].hostname=OpenWRT"
-  uci set "network.lan.ipaddr=192.168.1.1"
   uci commit
-  cp /rom/etc/hosts /etc/
-  cp /rom/etc/init.d/dnsmasq /etc/init.d/
-  [ -d "$pb_usbmount" ] && rmdir "$pb_usbmount"
+
   [ -d "$pb_pbmount"  ] && rmdir "$pb_pbmount"
 }
 
@@ -248,4 +236,9 @@ pb_stop() {
   sleep 3
   pb_umount pb
 }
+
+pb_stop_and_keep(){
+   $pb_pbmount/init.d/piratebox_alt stop
+}
+
 
