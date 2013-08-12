@@ -73,7 +73,7 @@ endef
 define Package/extendRoot-zoneinfo
     $(call Package/extendRoot/Default)
     TITLE:=zoneinfo-core for PHP applications on extendRoot
-    DEPENDS:=+zoneinfo-core 
+    DEPENDS:=extendRoot +zoneinfo-core 
 endef
 
 define Package/extendRoot-proftpd
