@@ -2,12 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=4
-
+PKG_RELEASE:=5
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/piratebox
+define Package/piratebox/Default
   SECTION:=net
   CATEGORY:=Network
   TITLE:=PirateBox-Main package
@@ -18,8 +17,26 @@ define Package/piratebox
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
 
+define Package/piratebox                         
+$(call Package/piratebox/Default)
+  VARIANT:=default
+endef
+
+define Package/piratebox-beta
+$(call Package/piratebox/Default)
+  TITLE += (links to beta repository)
+  VARIANT:=beta
+endef
+
+
 define Package/piratebox/description
 	Turns your OpenWRT Router into a PirateBox; see http://www.daviddarts.com
+endef
+
+define Package/piratebox-beta/description
+$(call Package/piratebox/description)
+
+With link to beta sources
 endef
 
 
@@ -103,6 +120,9 @@ define Package/piratebox/postinst
 	echo "Done"
 endef
 
+
+Package/piratebox-beta/postinst = $(Package/piratebox/postinst)
+
 define Package/piratebox/preinst
 	#!/bin/sh
 	#Disable Piratebox, it it seems that it is installed
@@ -118,6 +138,58 @@ define Package/piratebox/preinst
 	exit 0
 endef
 
+Package/piratebox-beta/preinst = $(Package/piratebox/preinst)
+
+define Package/piratebox/prerm
+	#!/bin/sh
+	# Revert-Changes
+	
+	. /usr/share/piratebox/piratebox.common
+
+
+	if [ -e /etc/init.d/luci_fixtime  ] ; then
+	   /etc/init.d/luci_fixtime enable
+	fi
+
+	if [ -e /etc/init.d/luci_dhcp_migrate ] ; then
+	   /etc/init.d/luci_dhcp_migrate enable
+	fi
+
+	if [ -e /etc/init.d/uhttpd ] ; then
+	   /etc/init.d/uhttpd enable
+	fi
+
+	 /etc/init.d/watchdog enable
+	 /etc/init.d/dnsmasq enable
+
+	/etc/init.d/piratebox disable
+	/etc/init.d/piratebox nodns
+	#Stop Piratebox
+	/etc/init.d/piratebox stop
+
+	# undo configuration
+	pb_undoconfig
+
+	echo "Please reboot for changes to take effect."
+endef
+
+Package/piratebox-beta/prerm = $(Package/piratebox/prerm)
+
+define  Package/piratebox/postrm
+	#!/bin/sh
+
+	# remove links, if exists
+
+	[ -e /etc/piratebox.config ] && rm  /etc/piratebox.config  
+	[ -e /etc/init.d/piratebox ] && rm  /etc/init.d/piratebox
+
+	exit 0
+
+endef 
+
+Package/piratebox-beta/postrm = $(Package/piratebox/postrm)
+
+
 define Build/Compile
 endef
 
@@ -132,6 +204,10 @@ define Package/piratebox/install
 	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common $(1)/usr/share/piratebox/piratebox.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config $(1)/etc/piratebox.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox $(1)/etc/init.d/piratebox
+	( [ "$(BUILD_VARIANT)"  == "beta" ] &&  sed 's|piratebox.aod-rpg.de|beta.openwrt.piratebox.de|' -i $(1)/etc/piratebox.config ) || echo "skipped"
 endef
 
+Package/piratebox-beta/install = $(Package/piratebox/install)
+
 $(eval $(call BuildPackage,piratebox))
+$(eval $(call BuildPackage,piratebox-beta))

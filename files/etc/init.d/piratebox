@@ -62,5 +62,6 @@ stop() {
 }
 
 stop_keep() {
-    $pb_pbmount/init.d/piratebox_alt stop
+
+	pb_stop_and_keep
 }
