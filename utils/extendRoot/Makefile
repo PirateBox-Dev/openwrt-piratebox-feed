@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.5.0
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -13,7 +13,7 @@ define Package/extendRoot/Default
   TITLE:=extendRoot
   URL:=http://piratebox.aod-rpg.de/dokuwiki/doku.php/extendRoot
   PKGARCH:=all
-  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rgp.de>
+  MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 #  SUBMENU:=
 endef
 
