@@ -1,0 +1,9 @@
+
+OpenWRT Package for PirateBox
+
+Matthias Strubel (c)2013 GPL-3
+
+
+To run against beta-urls ( beta.openwrt.piratebox.de) add the following line to .config in BUILD environment:
+
+	CONFIG_PIRATEBOX_BETA=y
