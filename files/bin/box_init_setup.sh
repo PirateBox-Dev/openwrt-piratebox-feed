@@ -7,7 +7,12 @@
 
 DEBUG=1
 
+FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
+FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
+
+
 mainmenu() {
+
 
 	while  true  
 	do
@@ -15,6 +20,11 @@ mainmenu() {
 		echo \n
 		echo "   1 - Setting password and enable SSH"
 		echo "   2 - Set date & time (enable timesave)"
+		if [ $FTP_CONFIG_AVAILABLE ] ; then
+			echo "   3 - Start FTP configuration "
+		else
+			echo "     - FTP configuration not available"
+		fi
 		echo \n
 		echo " Everything else causes an exit"
 		echo \n
@@ -23,6 +33,7 @@ mainmenu() {
 		case $option in 
 			("1")  _set_password_ ;;
 			("2")  _set_date_ ;;
+			("3")  _start_ftp_config_ ;;
 			(*) exit 0;;
 		esac
 		option=""
@@ -45,7 +56,7 @@ _set_date_() {
 
 	local year=""
 	local time_=""
-	
+
 	read -p "Please enter your date in the format  YYYYMMDD : " year
 	read -p "Please enter your time in the format  HHMM : " time_
 	datetime="$year""$time_"
@@ -66,5 +77,17 @@ _set_date_() {
 		fi
 	fi
 }
+
+_start_ftp_config_() {
+
+	if [ $FTP_CONFIG_AVAILABLE ] ; then
+	 	`$FTP_CONFIG_SCRIPT`
+	else
+		echo "FTP configuration not available"
+	fi
+	return 0
+
+}
+
 
 mainmenu
