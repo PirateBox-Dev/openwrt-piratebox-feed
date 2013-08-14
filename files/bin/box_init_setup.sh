@@ -59,6 +59,8 @@ _set_date_() {
 	if [ -e /opt/piratebox/timesave.sh ] ; then
 		if  ! grep -q timesave.sh /etc/crontab  ; then
 			/opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf install
+			# Create OpenWRT cron-enabling and insert into rc.local
+			/etc/init.d/piratebox timesave
 		else
 			 /opt/piratebox/timesave.sh  /opt/piratebox/conf/piratebox.conf save
 		fi
