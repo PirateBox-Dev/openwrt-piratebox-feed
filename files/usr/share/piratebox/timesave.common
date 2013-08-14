@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Simple script for installing timesave script into the system
+#  again after the OpenWRT code was removed out of the PirateBox-core-source
+
+
+pb_install_timesave() {
+
+	local timesave_script=$1 ; shift
+	local piratebox_config=$1 ; shift
+	
+        echo "Placing Timerecover on Startup" 
+        echo " $timesave_script $piratebox_config recover " >> /etc/rc.local 
+        sed  's:exit:#exit:g' -i /etc/rc.local 
+        echo "Activating cron-service.."
+        /etc/init.d/cron enable
+        /etc/init.d/cron start
+        echo "done"
+	
+
+}
