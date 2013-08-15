@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox-mod-imageboard
-PKG_VERSION:=0.0.1
-PKG_RELEASE:=2
+PKG_VERSION:=0.0.2
+PKG_RELEASE:=1
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -27,14 +27,26 @@ endef
 define Package/piratebox-mod-imageboard/postinst
         #!/bin/sh
         #stuff needed because there is no ext-perl package
-	ln -s /usr/local/bin/perl /usr/bin/perl
-	ln -s /usr/local/lib/perl* /usr/lib/
+	. /etc/ext.config
+
+	ln -s $$ext_linktarget/usr/local/usr/bin/perl /usr/bin/perl
+	ln -s $$ext_linktarget/usr/local/usr/lib/perl* /usr/lib/
 	#start the init from piratebox scripts
         . /etc/piratebox.config
 	$$pb_pbmount/bin/install_piratebox.sh  "$$pb_piratebox_conf"  imageboard
        exit 0
 endef
 
+define Package/piratebox-mod-imageboard/prerm
+	#!/bin/sh
+	# cleanup our linked stuff
+	# do only when linked
+	if [ -L /usr/bin/perl ] ; then
+		echo "Removing symlinks"
+		rm /usr/bin/perl
+		rm /usr/lib/perl*
+	fi
+endef
 
 define Build/Compile
 endef
