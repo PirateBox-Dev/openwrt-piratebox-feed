@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=10
+PKG_RELEASE:=14
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -13,7 +13,7 @@ define Package/librarybox
   TITLE:=LibraryBox-Main package
   SUBMENU:=PirateBox
   URL:=http://www.librarybox.us
-  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv
+  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-sqlite3 +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-pdo +proftpd
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
@@ -33,6 +33,10 @@ define Package/librarybox/postinst
 
 	if [ ! -e /etc/piratebox.config ] ; then
 	   ln -s $$PKG_ROOT/etc/piratebox.config /etc
+	fi
+
+	if [ ! -e /etc/auto.config ] ; then
+	   ln -s $$PKG_ROOT/etc/auto.config /etc
 	fi
 
 	# include PirateBox shared functionality
@@ -125,9 +129,12 @@ define Package/librarybox/install
 	$(INSTALL_DIR) $(1)/usr/share/piratebox
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common $(1)/usr/share/piratebox/piratebox.common
-	$(INSTALL_BIN) ./files/etc/piratebox.config $(1)/etc/piratebox.config
-	$(INSTALL_BIN) ./files/etc/init.d/piratebox $(1)/etc/init.d/piratebox
+	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common  $(1)/usr/share/piratebox/piratebox.common
+	$(INSTALL_BIN) ./files/usr/share/piratebox/autoconfig.common $(1)/usr/share/piratebox/autoconfig.common
+	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
+	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
+	$(INSTALL_BIN) ./files/etc/auto.config 		$(1)/etc/auto.config
+	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
 endef
 
 $(eval $(call BuildPackage,librarybox))

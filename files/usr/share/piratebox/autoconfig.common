@@ -1,0 +1,124 @@
+. /etc/auto.config
+#additional_usb_www_init() {
+#
+#      echo "${initscript}: Creating enhanced www content folder on usb-stick..."
+#      mkdir -p $oa_ext_www_content
+#
+#}
+
+auto_config_init() {
+
+   echo "${initscript}: Creating USB config folders..."
+   mkdir -p $oa_current_config
+   mkdir -p $oa_config
+   
+   echo "${initscript}: Placing config check to rc.local..."
+
+   #Preparing autostart for config via USB Stick
+	    #ensure that the exit is disabled
+   sed 's;^exit;#exit;' -i /etc/rc.local
+   echo '/etc/init.d/piratebox config &> ' "$pb_usbdir/tmp_apply_config.log"  >> /etc/rc.local
+   echo 'cat ' "$pb_usbdir/tmp_apply_config.log"' >> ' "$pb_usbdir/apply_config.log"   >> /etc/rc.local
+   echo 'rm  '"$pb_usbdir/tmp_apply_config.log"          >> /etc/rc.local
+
+   #Fill up USB config folder
+   auto_config_export_form_uci && auto_config_transfer_config
+}
+
+
+auto_config_export_form_uci(){
+    mkdir -p $oa_current_config
+    echo "Exporting current config to  $oa_current_config"
+    echo "Getting SSID of iface0 via uci"
+    local ssid=$(auto_config_uci_export 'wireless' '@wifi-iface[0].ssid'  )
+    echo "Getting txpower of device0 via uci"
+    local txpower=$(auto_config_uci_export   'wireless'  '@wifi-device[0].txpower'  )
+    echo "Getting channel of device0 via uci"
+    local channel=$(auto_config_uci_export   'wireless'  '@wifi-device[0].channel' )
+    
+    echo "Getting hostname  via uci"
+    local hostname=$(auto_config_uci_export  'system' '@system[0].hostname' )    
+    
+    echo $ssid       > "$oa_current_config_ssid"
+    echo $txpower > "$oa_current_config_txpower"
+    echo $channel > "$oa_current_config_channel"
+    
+    echo $hostname >  "$oa_current_config_hostname"
+}
+
+auto_config_transfer_config() {
+	cp $oa_current_config/* $oa_config
+}
+
+auto_config_uci_export(){
+   #read config via uci end print to stdout, which can be catched
+   local config=$1 ; shift
+   local section=$1 ; shift
+#   local type=$1 ; shift
+    
+   uci get "$config.$section"
+    
+}
+
+auto_config_set_ssid(){
+     echo "--->SSID: $1<----"
+     pb_setSSID "$1"
+#     uci set "wireless.@wifi-iface[0].ssid=$1"
+}
+
+auto_config_set_txpower(){
+     echo "--->txpower: $1<----"
+     uci set "wireless.radio0.txpower=$1"
+}
+
+auto_config_set_channel(){
+     echo "--->channel: $1<----"
+     uci set "wireless.@wifi-device[0].channel=$1"
+}
+
+auto_config_set_hostname(){
+     echo "--->hostname: $1<----"
+     pb_setHostname $1
+}
+
+auto_config_lookup_and_set_step(){
+    local in_changed=$1; shift
+    local config=$1; shift
+    local filename=$1; shift
+    local current_status_file=$1; shift
+    
+
+    if [ -f $filename ] ; then
+	if [ "`cat $filename`"  != "`cat $current_status_file`" ] ; then
+		echo " $config - configuration is different, setting to new value"
+		auto_config_set_$config "`cat $filename `"
+		changed=1
+	fi
+    fi
+
+    return $changed
+}
+
+auto_config_lookup_and_set(){
+   #checks defined variables if any file exists and run set to
+    echo "Checking $oa_config folder for values to be set"
+   #remember if I set anything
+    changed=0
+    
+    echo " ... Checking ssid $oa_new_config_ssid"
+    auto_config_lookup_and_set_step "$changed" 'ssid'  "$oa_new_config_ssid" "$oa_current_config_ssid"
+    echo " ... Checking txpower $oa_new_config_txpower" 
+    auto_config_lookup_and_set_step "$changed" 'txpower'  "$oa_new_config_txpower" "$oa_current_config_txpower"
+    echo " ... Checking channel $oa_new_config_channel"
+    auto_config_lookup_and_set_step "$changed" 'channel'  "$oa_new_config_channel" "$oa_current_config_channel"
+    echo " ... Checking hostname $oa_new_config_hostname"
+    auto_config_lookup_and_set_step "$changed" 'hostname'  "$oa_new_config_hostname" "$oa_current_config_hostname"
+   
+
+    if [ "$changed" = "1" ] ; then
+        echo "done some changes... saving..."
+        uci commit
+	return 1
+    fi
+    return 0
+}

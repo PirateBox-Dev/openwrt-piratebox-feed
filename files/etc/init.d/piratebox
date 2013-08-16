@@ -3,13 +3,16 @@
 NAME=piratebox
 START=80
 STOP=20
-EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep"
+EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep exportConfig config timesave"
 EXTRA_HELP="	setup	Activate current USB and network configuration
 	init			initialize installation
 	init_openwrt  rerun startup-openwrt initializarion from piratebox scripts (caution)
-     updatePB  Updates only PirateBox files from USB stick Image-File
+	updatePB  Updates only PirateBox files from USB stick Image-File
 	nodns	Disable local DNS redirection through dnsmasq
-	stop_keep  stops current running deamons and leaves /opt/piratebox mounted"
+	stop_keep  stops current running deamons and leaves /opt/piratebox mounted
+	exportConfig Exports only configuration
+	config       ReInitialize via config folder
+	timesave   Installs timesafe script into rc.local and enables cron"
 
 
 # include PirateBox shared functionality
@@ -18,12 +21,14 @@ EXTRA_HELP="	setup	Activate current USB and network configuration
 if [ -e /etc/ext.config ] ; then 
   . /etc/ext.config
   . $ext_linktarget/usr/share/piratebox/piratebox.common
+  . $ext_linktarget/usr/share/piratebox/autoconfig.common
 else
   . /usr/share/piratebox/piratebox.common
+  . /usr/share/piratebox/autoconfig.common
 fi
 
 setup() {
-  pb_netconfig
+  pb_setup
 }
 
 init() {
@@ -62,6 +67,33 @@ stop() {
 }
 
 stop_keep() {
-
 	pb_stop_and_keep
 }
+
+timesave() {
+        . $ext_linktarget/usr/share/piratebox/timesave.common
+	pb_install_timesave $pb_piratebox_conf $pb_timesave_script
+}
+
+### Auto-Config functionalities
+config(){
+    #. /usr/share/piratebox/autoconfig.common
+    # First generate the current status out of the configurations:
+    auto_config_export_form_uci
+    # Then check for changes and do them
+    auto_config_lookup_and_set
+    local change_rc=$?  #Save RC for later reboot check
+
+    # Export the changed values again and copy them over to the usb stick        
+    auto_config_export_form_uci  && auto_config_transfer_config
+    if [ "$change_rc" == "1" ] ; then
+        echo "Severall changes were made, doing reboot..."
+        reboot
+    fi
+}
+
+exportConfig(){
+     # . /usr/share/piratebox/autoconfig.common
+     auto_config_export_form_uci && auto_config_transfer_config
+}
+
