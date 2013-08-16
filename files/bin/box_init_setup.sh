@@ -12,6 +12,10 @@ FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
 FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
 
 
+FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
+FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
+
+
 mainmenu() {
 
 
@@ -21,7 +25,6 @@ mainmenu() {
 		echo " " 
 		echo "   1 - Setting password and enable SSH"
 		echo "   2 - Set date & time (enable timesave)"
-		echo " "
 		if [ $FTP_CONFIG_AVAILABLE ] ; then
 			echo "   3 - Start FTP configuration "
 		else
