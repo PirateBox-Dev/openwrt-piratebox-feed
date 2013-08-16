@@ -130,10 +130,8 @@ define Package/librarybox/install
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common  $(1)/usr/share/piratebox/piratebox.common
-	$(INSTALL_BIN) ./files/usr/share/piratebox/autoconfig.common $(1)/usr/share/piratebox/autoconfig.common
 	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
-	$(INSTALL_BIN) ./files/etc/auto.config 		$(1)/etc/auto.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
 endef
 
