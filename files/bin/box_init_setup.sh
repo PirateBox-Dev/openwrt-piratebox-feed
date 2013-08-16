@@ -27,7 +27,7 @@ mainmenu() {
 		else
 			echo "     - FTP configuration not available"
 		fi
-		echo \n
+		echo ""
 		echo " Everything else causes an exit"
 		echo " "
 		read -p " Choose an option: " option
