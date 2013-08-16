@@ -73,7 +73,7 @@ _set_date_() {
 	fi
 	# If timesave script is available, and it is not already installed, install it.
 	if [ -e $TIMESAVE_SCRIPT ] ; then
-		if  ! grep -q timesave.sh /etc/crontab  ; then
+		if  ! crontab -l | grep -q timesave.sh  ; then
 			 $TIMESAVE_SCRIPT  /opt/piratebox/conf/piratebox.conf install
 			# Create OpenWRT cron-enabling and insert into rc.local
 			/etc/init.d/piratebox timesave
