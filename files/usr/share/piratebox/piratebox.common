@@ -202,7 +202,7 @@ pb_init() {
   pb_mkpbimg
 
   echo "${initscrip}: Fixing timezone in php config..."
-  sed 's|;date.timezone =|date.timezone = UTC|' -i /etc/php.ini
+  sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
  
 }
 
