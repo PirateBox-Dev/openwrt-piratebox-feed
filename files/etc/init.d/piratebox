@@ -3,7 +3,7 @@
 NAME=piratebox
 START=80
 STOP=20
-EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep exportConfig config"
+EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep exportConfig config timesave"
 EXTRA_HELP="	setup	Activate current USB and network configuration
 	init			initialize installation
 	init_openwrt  rerun startup-openwrt initializarion from piratebox scripts (caution)
@@ -12,7 +12,7 @@ EXTRA_HELP="	setup	Activate current USB and network configuration
 	stop_keep  stops current running deamons and leaves /opt/piratebox mounted
 	exportConfig Exports only configuration
 	config       ReInitialize via config folder
-	"
+	timesave   Installs timesafe script into rc.local and enables cron"
 
 
 # include PirateBox shared functionality
@@ -67,7 +67,12 @@ stop() {
 }
 
 stop_keep() {
-    pb_pbmount/init.d/piratebox_alt stop
+	pb_stop_and_keep
+}
+
+timesave() {
+        . $ext_linktarget/usr/share/piratebox/timesave.common
+	pb_install_timesave $pb_piratebox_conf $pb_timesave_script
 }
 
 ### Auto-Config functionalities
