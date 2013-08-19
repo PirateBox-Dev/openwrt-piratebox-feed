@@ -9,7 +9,8 @@ if [  -e /mnt/usb/install/auto_package || !  /etc/init.d/ext enabled ] ; then
 	/bin/box_installer.sh 2>&1 | logger 
 	# create the file always
 	mv /mnt/usb/install/auto_package  /mnt/usb/install/auto_package_done
-	kill $(cat $PID)
+	logger "Initiating reboot after installation"
+	reboot
 else
 	echo "Does not run because /mnt/usb/install/auto_package  does not exists"
 fi
