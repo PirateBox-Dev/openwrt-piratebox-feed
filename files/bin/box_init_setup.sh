@@ -5,7 +5,7 @@
 ##      - Date & Time with userinput
 ##            => initialize timesave script if available.
 
-DEBUG=0
+DEBUG=false
 TIMESAVE_SCRIPT="/opt/piratebox/bin/timesave.sh"
 
 FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
@@ -49,7 +49,7 @@ _set_password_() {
 
 	echo "Please enter your password. The following command won't show you the entered letters."
 	local cmd=passwd
-	if  ! $DEBUG  ; then
+	if  [ "$DEBUG" = "false" ]  ; then
 		$cmd  && echo "$? ....OK" 
 	else
 		echo "$cmd"
@@ -66,7 +66,7 @@ _set_date_() {
 	read -p "Please enter your time in the format  HHMM : " time_
 	datetime="$year""$time_"
 	local cmd="date $datetime"
-	if  ! $DEBUG  ; then 
+	if  [ $DEBUG = "false" ]  ; then 
 		$cmd && echo "... OK"
 	else
 		echo "$cmd"
