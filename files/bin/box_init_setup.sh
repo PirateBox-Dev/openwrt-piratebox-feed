@@ -86,7 +86,7 @@ _set_date_() {
 _start_ftp_config_() {
 
 	if [ $FTP_CONFIG_AVAILABLE ] ; then
-	 	`$FTP_CONFIG_SCRIPT`
+	 	. $FTP_CONFIG_SCRIPT
 	else
 		echo "FTP configuration not available"
 	fi
