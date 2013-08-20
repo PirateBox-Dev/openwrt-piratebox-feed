@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=14
+PKG_RELEASE:=20
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -86,6 +86,12 @@ define Package/librarybox/postinst
 	# start PirateBox service
 	/etc/init.d/piratebox enable 
 	/etc/init.d/piratebox start
+
+
+	# IF usbcfg is installed, enable it
+	if [ -e /etc/init.d/autocfg ] ; then
+		/etc/init.d/autocfg enable
+	fi
 	
 	echo "Bringing PirateBox down again and leave image mounted"
  	echo " for further installation"
@@ -130,10 +136,8 @@ define Package/librarybox/install
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common  $(1)/usr/share/piratebox/piratebox.common
-	$(INSTALL_BIN) ./files/usr/share/piratebox/autoconfig.common $(1)/usr/share/piratebox/autoconfig.common
 	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
-	$(INSTALL_BIN) ./files/etc/auto.config 		$(1)/etc/auto.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
 endef
 
