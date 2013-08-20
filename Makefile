@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
 PKG_VERSION:=0.1.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/MaStr/usb-config-scripts/archive/$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/MaStr/usb-config-scripts/archive/
 PKG_MD5SUM:=fe211e1e37530673600f31b1391a79cc
 PKG_CAT:=zcat
 
@@ -46,15 +46,15 @@ endef
 
 define Package/usb-config-scripts/install
 	$(INSTALL_DIR) $(1)/opt/autocfg
-	$(INSTALL_DIR) $(1)/opt/autocfg/cfg
+	$(INSTALL_DIR) $(1)/opt/autocfg/{bin,conf}
 	$(INSTALL_DIR) $(1)/opt/autocfg/lib
 	$(INSTALL_DIR) $(1)/opt/autocfg/modules.available
 	$(INSTALL_DIR) $(1)/opt/autocfg/modules.enabled
 
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/* 	$(1)/opt/autocfg/bin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cfg/* 	$(1)/opt/autocfg/cfg/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/conf/* 	$(1)/opt/autocfg/conf/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/* 	$(1)/opt/autocfg/lib/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/modules.available/* 	$(1)/opt/autocfg/modules.available/*
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/modules.available/* 	$(1)/opt/autocfg/modules.available/
 endef
 
 $(eval $(call BuildPackage,usb-config-scripts))
