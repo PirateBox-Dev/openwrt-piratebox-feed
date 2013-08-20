@@ -24,7 +24,7 @@ define Package/usb-config-scripts
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
 
-define Package/usb-config-scripts
+define Package/usb-config-scripts/description
 	Helps easier configuration via simple files on USB Stick for i.e. LibraryBox
 endef
 
