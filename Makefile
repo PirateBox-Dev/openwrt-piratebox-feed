@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
 PKG_VERSION:=0.1.1
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
@@ -43,9 +43,9 @@ endef
 define Package/usb-config-scripts-librarybox/postinst
 	#!/bin/sh
 	echo "Linking used modules"
-	ln -s /opt/autocfg/modules.available/*openwrt* /opt/autocfg/modules.enabled
-	ln -s /opt/autocfg/modules.available/*librarybox* /opt/autocfg/modules.enabled
-	ln -s /opt/autocfg/modules.available/50_piratebox_hostname.sh /opt/autocfg/modules.enabled
+	ln -s ../modules.available/*openwrt* $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/*librarybox* $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/50_piratebox_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 endef
 
 define Build/Compile
