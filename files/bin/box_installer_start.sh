@@ -4,7 +4,7 @@
 PID=/var/run/auto_syslogd
 
 # Initiates the log facility and starts the installation
-if [  -e /mnt/usb/install/auto_package ] || [ !  /etc/init.d/ext enabled ] ; then
+if  [ -e /mnt/usb/install/auto_package ] ||  !  /etc/init.d/ext enabled  ; then
 	start-stop-daemon -b -S -m -p $PID -x syslogd -- -n -L -R 192.168.1.2:9999
 	/bin/box_installer.sh 2>&1 | logger 
 	# create the file always
