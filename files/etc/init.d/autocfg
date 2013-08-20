@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+NAME=autocfg
+EXTRA_COMMANDS="reset"
+EXTRA_HELP="reset	Removes all config files on the usb stick and recreates them"
+
+work_folder=/opt/autocfg
+
+start() {
+
+   $work_folder/bin/auto_config.sh >> /mnt/usb/apply_config.log
+   local change_rc=$?
+
+   if [ "$change_rc" == "0"]  ; then
+	echo "Changes by auto-config" >>  /mnt/usb/apply_config.log
+	echo "Initiates reboot"  >>  /mnt/usb/apply_config.log
+	reboot
+   fi
+
+}
+
+reset () {
+   . $work_folder/conf/auto.config.sh
+   rm $cfg_auto_folder/*
+ 
+   $work_folder/bin/auto_config.sh  
+}
+
+stop() {
+}
