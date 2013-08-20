@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
-PKG_VERSION:=0.1.1
+PKG_VERSION:=0.2.0
 PKG_RELEASE:=7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/MaStr/usb-config-scripts/archive/
-PKG_MD5SUM:=e119f6aa1cf53c73ae88b2b61cc61f60
+PKG_SOURCE_URL:=https://github.com/LibraryBox-Dev/usb-config-scripts/archive/
+PKG_MD5SUM:=f130d7dc8e31f71a5598fc1d8cf67ed1
 PKG_CAT:=zcat
 
 
@@ -52,6 +52,8 @@ define Package/usb-config-scripts-librarybox/postinst
 	ln -s ../modules.available/60_librarybox_ftpanon.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	ln -s ../modules.available/60_librarybox_ftpsync.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	ln -s ../modules.available/60_librarybox_ftpsyncport.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/61_librarybox_shoutbox.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	#- default piratebox
 	ln -s ../modules.available/50_piratebox_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 endef
 
