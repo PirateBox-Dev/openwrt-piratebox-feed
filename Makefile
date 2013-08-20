@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
 PKG_VERSION:=0.1.1
-PKG_RELEASE:=2
+PKG_RELEASE:=4
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
@@ -69,7 +69,7 @@ define Package/usb-config-scripts/install
 endef
 
 
-Package/usb-config-scripts-librarybox/installi = $(Package/usb-config-scripts/install)
+Package/usb-config-scripts-librarybox/install = $(Package/usb-config-scripts/install)
 
 $(eval $(call BuildPackage,usb-config-scripts))
 $(eval $(call BuildPackage,usb-config-scripts-librarybox))
