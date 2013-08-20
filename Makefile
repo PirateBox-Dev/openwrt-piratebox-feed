@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
 PKG_VERSION:=0.1.1
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
@@ -44,9 +44,9 @@ define Package/usb-config-scripts-librarybox/postinst
 	#!/bin/sh
 	echo "Linking used modules"
 	ln -s ../modules.available/10_openwrt_ssid.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/10_openwrt_txpower.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/10_openwrt_channel.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/10_openwrt_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/11_openwrt_txpower.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/12_openwrt_channel.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/13_openwrt_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	ln -s ../modules.available/60_librarybox_ftp.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	ln -s ../modules.available/60_librarybox_ftpadmin.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	ln -s ../modules.available/60_librarybox_ftpanon.sh $$PKG_ROOT/opt/autocfg/modules.enabled
