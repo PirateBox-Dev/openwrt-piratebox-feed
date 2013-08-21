@@ -56,7 +56,7 @@ run_prepare_extendRoot(){
 run_init_extendRoot() {
 	if  /etc/init.d/ext enabled  ; then
 		echo "$0 : not running extendRoot init, because it already is"
-		exit 0
+		return 0
 	fi
 	/etc/init.d/ext init
 	[ $? ] || exit $?
