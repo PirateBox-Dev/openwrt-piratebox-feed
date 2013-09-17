@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -176,6 +176,7 @@ define Package/piratebox/install
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common $(1)/usr/share/piratebox/piratebox.common
+	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config $(1)/etc/piratebox.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox $(1)/etc/init.d/piratebox
 	( [ "$(CONFIG_PIRATEBOX_BETA)"  == "y" ] &&  sed 's|piratebox.aod-rpg.de|beta.openwrt.piratebox.de|' -i $(1)/etc/piratebox.config ) || echo "skipped"
