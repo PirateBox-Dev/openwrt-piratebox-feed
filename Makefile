@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
-PKG_VERSION:=0.2.1
+PKG_VERSION:=0.2.2
 PKG_RELEASE:=7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/LibraryBox-Dev/usb-config-scripts/archive/
-PKG_MD5SUM:=c47d066e324d2aa837a88f447b3b6ce1
+PKG_MD5SUM:=cdddf018e45c9db844d2f9d600e90ead
 PKG_CAT:=zcat
 
 
