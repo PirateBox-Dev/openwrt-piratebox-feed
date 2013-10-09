@@ -7,7 +7,7 @@ PKG_RELEASE:=7
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/LibraryBox-Dev/usb-config-scripts/archive/
-PKG_MD5SUM:=f130d7dc8e31f71a5598fc1d8cf67ed1
+PKG_MD5SUM:=c47d066e324d2aa837a88f447b3b6ce1
 PKG_CAT:=zcat
 
 
