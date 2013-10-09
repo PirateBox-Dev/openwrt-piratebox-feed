@@ -35,10 +35,6 @@ define Package/librarybox/postinst
 	   ln -s $$PKG_ROOT/etc/piratebox.config /etc
 	fi
 
-	if [ ! -e /etc/auto.config ] ; then
-	   ln -s $$PKG_ROOT/etc/auto.config /etc
-	fi
-
 	# include PirateBox shared functionality
 	. $$PKG_ROOT/usr/share/piratebox/piratebox.common
 	. $$PKG_ROOT/etc/piratebox.config
