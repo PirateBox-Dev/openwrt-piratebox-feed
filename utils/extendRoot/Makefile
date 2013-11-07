@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.5.0
+PKG_VERSION:=0.6.0
 PKG_RELEASE:=3
 
 
@@ -72,9 +72,31 @@ endef
 define Package/extendRoot-proftpd
 	$(call Package/extendRoot/Default)
 	 TITLE:=proftpd server on extendRoot
-	 DEPENDS:=extendRoot
+	 DEPENDS:=extendRoot +proftpd
 endef
 
+define Package/extendRoot-dbus
+	$(call Package/extendRoot/Default)
+	TITLE:=dbus config on extendRoot
+	DEPENDS:=extendRoot +dbus
+endef
+
+define Package/extendRoot-avahi
+	$(call Package/extendRoot/Default)
+	TITLE:=avahi toolset  on extendRoot
+	DEPENDS:=extendRoot +avahi-daemon +avahi-utils
+endef
+
+define Package/extendRoot-avahi/description
+	not valid as a direct install on root.
+	Links down all needed stuff to get a avahi daemon running within ext-root
+endef
+
+define Package/extendRoot-dbus/description
+   not valid as a direct install on root. 
+   opkg -d ext install extendRoot-bus
+   Links dbus files into root
+endef
 
 define Package/extendRoot-piratebox/description
    not valid as a direct install on root. 
@@ -252,6 +274,38 @@ define Package/extendRoot-proftpd/prerm
 	rm /usr/sbin/in.proftpd 
 endef
 
+define Package/extendRoot-dbus/postinst
+	#!/bin/sh
+ 	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/dbus-1 /etc
+	ln -s $$ext_linktarget/usr/sbin/dbus-daemon /usr/sbin
+	ln -s $$ext_linktarget/usr/bin/dbus-uuidgen /usr/bin
+	ln -s $$ext_linktarget/usr/bin/dbus-launch  /usr/bin
+	ln -s $$ext_linktarget/etc/init.d/dbus	    /etc/init.d
+endef
+
+define Package/extendRoot-dbus/prerm
+	#!/bin/sh
+	rm -r /etc/dbus-1
+	rm /usr/sbin/dbus-daemon
+	rm /usr/bin/dbus-uuidgen
+	rm /usr/bin/dbus-launch
+	rm /etc/init.d/dbus 
+endef
+
+define Package/extendRoot-avahi/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/avahi 	/etc
+	ln -s $$ext_linktarget/etc/init.d/avahi-daemon /etc/init.d
+endef
+
+define Package/extendRoot-avahi/prerm
+	#!/bin/sh
+	rm /etc/init.d/avahi-daemon
+	rm /etc/avahi
+endef
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -277,4 +331,6 @@ $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-zoneinfo))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
 $(eval $(call BuildPlugin,extendRoot-proftpd))
+$(eval $(call BuildPlugin,extendRoot-dbus))
+$(eval $(call BuildPlugin,extendRoot-avahi))
 
