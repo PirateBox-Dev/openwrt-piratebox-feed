@@ -48,7 +48,7 @@ endef
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
 endef
 
 define Package/extendRoot-php
