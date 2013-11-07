@@ -255,9 +255,41 @@ pb_init() {
 
   echo "${initscript}: Fixing timezone in php config..."
   sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
+
+  if [ -e /etc/avahi ] ; then
+	echo "Avahi installation found. Brining our config via link in place"
+	if [ ! -e /etc/avahi.original ] ; then
+		mv /etc/avahi /etc/avahi.original 
+	fi
+	ln -s $pb_pbmount/conf/avahi /etc/avahi
+
+	echo "Enabling dbus & avahi services"
+	/etc/init.d/dbus enable
+	/etc/init.d/avahi-daemon enable
+	echo "Moving avahi-daemon beyond the startup of piratebox"
+	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon 
+  fi
  
 }
 
+pb_prepare_avahi() {
+  if [ -e /etc/avahi ] ; then
+	echo "Avahi installation found. Brining our config via link in place"
+	if [ ! -e /etc/avahi.original ] ; then
+		mv /etc/avahi /etc/avahi.original 
+	fi
+	ln -s $pb_pbmount/conf/avahi /etc/avahi
+
+	echo "Enabling dbus & avahi services"
+	/etc/init.d/dbus enable
+	/etc/init.d/avahi-daemon enable
+	echo "Moving avahi-daemon beyond the startup of piratebox"
+	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon
+  else
+	echo "/etc/avahi config folder not found.. skipping avahi prepare" 
+  fi
+
+}
 
 #Removes current image file and overwrite it with new one
 pb_updatePBImage () {
