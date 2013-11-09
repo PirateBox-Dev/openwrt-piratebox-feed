@@ -1,0 +1,315 @@
+. /etc/ext.config 
+
+
+ext_init() {
+      ext_usbwait
+      ext_usbconfig
+      
+  echo "${initscript}: Mounting external USB storage..."
+
+  ext_mount usb
+  [ -d "$ext_usbdir" ] || mkdir -p "$ext_usbdir"
+
+
+  if ext_needswap
+  then
+    echo "${initscript}: Creating swapspace..."
+    ext_mkswap
+  fi
+
+  if ext_needextimg
+  then
+    echo "${initscript}: Creating ext loop image..."
+    ext_mkextimg
+  fi
+    
+   ext_fix_path
+   ext_enhance_opkg
+   
+   echo "${initscript}: Enable for startup"
+   /etc/init.d/ext enable
+
+   echo "${initscript}: Starting..."
+   /etc/init.d/ext start
+   
+   echo "If you run this during an install or run the init the first time"
+   echo " please run "
+   echo "    source /etc/profile "
+}
+
+
+ext_usbwait() {
+  # wait for USB device to show up
+  if [ ! -e "$ext_usbdevice" ]
+  then
+		#TODO describe what kind of disc is expeected
+    echo "Please connect USB disk. If it is already plugged-in,"
+    echo "wait for a few seconds, and if nothing happens, please"
+    echo "reconnect the device. Keep in mind that your router's"
+    echo "ports may not be able to supply enough power to"
+    echo "spin-up a USB HDD."
+    while [ ! -e "$ext_usbdevice" ]
+    do
+      sleep 1
+      echo -n "."
+    done
+    echo
+    echo "USB disk is now available. Continuing..."
+  fi
+}
+
+ext_usbconfig() {
+  # prepare USB disk for mounting
+  [ -d "$ext_usbmount" ] || mkdir -p "$ext_usbmount"
+  ext_uciset fstab ext1  mount \
+    target=$ext_usbmount \
+    device=$ext_usbdevice \
+    fstype=vfat \
+    options=rw,sync,umask=0 \
+    enabled_fsck=0 \
+    enabled=1
+
+}
+
+
+ext_needswap() {
+  [ ! -e "$ext_swapimg" ]
+}
+
+ext_mkswap() {
+  ext_umount swap
+  ext_mount usb
+  [ -d "$(dirname $ext_swapimg)" ] || mkdir -p "$(dirname $ext_swapimg)"
+  # create a swap file
+  dd if=/dev/zero of="$ext_swapimg" bs=1M count=32
+  mkswap "$ext_swapimg"
+  ext_uciset fstab swap pirateswap \
+    device=$ext_swapimg \
+    enabled=1
+}
+
+
+ext_mount() {
+  parts=$*
+  [ "$parts" == "-a" ] && parts="usb ext swap"
+  for part in $*
+  do
+    case $part in
+      usb)
+	  ext_ismounted "$ext_usbmount" && continue
+	  [ -d "$ext_usbmount" ] || mkdir -p "$ext_usbmount"
+          if ! mount -o umask=0,noatime,rw "$ext_usbdevice" "$ext_usbmount"
+          then
+            echo "${initscript}: ERROR: unable to mount USB storage" >&2
+            exit 5
+          fi
+          ;;
+      ext)
+	  ext_ismounted "$ext_mountpoint" && continue
+	  ext_mount usb
+	  [ -d "$ext_mountpoint" ] || mkdir -p "$ext_mountpoint"
+          if ! mount -o loop,rw,sync "$ext_img" "$ext_mountpoint"
+          then
+            echo "${initscript}: ERROR: unable to mount ext image" >&2
+            exit 5
+          fi
+          ;;
+      swap)
+	  ext_mount usb
+          swapon "$ext_swapimg" &>/dev/null
+          ;;
+    esac
+  done
+}
+
+ext_ismounted() {
+  mount | grep "on $1 " >/dev/null
+}
+
+
+ext_umount() {
+  parts=$*
+  [ "$parts" == "-a" ] && parts="swap ext usb"
+  for part in $*
+  do
+    case $part in
+      usb)
+	  ext_ismounted "$ext_usbmount" || continue
+          ext_umount swap  ext
+          if ! umount "$ext_usbmount"
+          then
+            echo "${initscript}: WARNING: unable to umount USB storage" >&2
+	    return 255
+          fi
+          ;;
+      ext)
+          # losetup -d here just in case user umounted manually
+          losetup -d /dev/loop0 &>/dev/null
+	  ext_ismounted "$ext_mountpoint" || continue
+          if ! umount "$ext_mountpoint"
+          then
+	  
+	    echo "ERROR: can't umount $ext_mountpoint ..exiting "
+	    return 255 
+	   fi
+          losetup -d /dev/loop0
+          ;;
+       swap)
+          #TODO: error handling
+          swapoff "$ext_swapimg" &>/dev/null
+          ;;
+    esac
+  done
+}
+
+ext_uciadd() {
+  local config=$1 ; shift
+  local section=$1 ; shift
+  local type=$1 ; shift
+  [ -e "/etc/config/$config" ] || touch "/etc/config/$config"
+  uci show "$config.$section" &>/dev/null \
+    || uci add "$config $section" &>/dev/null
+  uci set "$config.$section=$type"
+}
+
+
+ext_uciset() {
+  local config=$1 ; shift
+  local section=$1 ; shift
+  local type=$1 ; shift
+  ext_uciadd $config $section $type
+  for opt in "$@"
+  do
+    uci set "$config.$section.$opt"
+  done
+  uci commit
+}
+
+
+ext_needextimg() {
+  # Config-Files for non-interactive install
+  if [ -e $ext_force_ext_overwrite ] ; then
+      echo "${initscript}: Forcing overwrite of $ext_img if it already exsits"
+      return 0
+  else 
+      if [ -e $ext_force_ext_ignore ] ; then
+	 echo "${initscript}: Forcing  to NOT overwrite of $ext_img if it already exsits"
+         return 1
+      fi
+  fi 
+ 
+  #ask if interactive
+  if [ -e $ext_img ] ; then
+      echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      echo "@@              Caution                   @@"
+      echo "@@  It seems there is already the file    @@"
+      echo "@@  $ext_img  "
+      echo "@@  on your USB Stick                     @@"
+      echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      echo " "
+      echo " This can happen, if you installed a new "
+      echo "  firmware on your router, or if you did  "
+      echo "  an upgrade of  the PirateBox  package.  "
+      echo " "
+      echo "  If you are upgrading the package, "
+      echo "       DO NOT overwrite the file!"
+      echo " "
+      echo " Do you want to reinitiate your USB and "
+      echo  -n " overwrite the file? ( y / n) "
+      read answer
+
+      if [ "$answer" = "n" ]  ; then
+        echo "${initscript}: Skipping further USB prepare-steps"
+        return 1
+      fi
+  fi
+
+  return 0
+}
+
+ext_mkextimg() {
+  ext_umount ext
+  ext_mount usb
+  [ -d "$(dirname $ext_img)" ] || mkdir -p "$(dirname $ext_img)"
+  [ -d "$(dirname $ext_img_src)" ] || mkdir -p "$(dirname $ext_img_src)"
+
+   if [ ! -e $ext_img_src ] ; then
+      echo "${initscript}: No external Image-template file found... loading from Internet"
+      wget -O $ext_img_src  $ext_img_src_url
+      if [ $? -ne 0 ] ; then
+         echo "${initscript}: ERROR: wget failed... cancel"
+	 #remove wrong file
+	 rm -f $ext_img_src
+	 exit 5
+      fi
+   fi
+   gzip -dc  "$ext_img_src" > "$ext_img" 
+   
+   [ -d "$ext_mountpoint" ] || mkdir -p "$ext_mountpoint"
+
+  ext_uciset fstab piratebox mount \
+    target=$ext_mountpoint \
+    device=$ext_img \
+    options=loop \
+    enabled=1
+}
+
+ext_fix_path() {
+
+    echo "${initscript}: Including the external mountpoint to system"
+    # link ext usr to /usr/local
+  [ -L  $ext_linktarget ] || ln -sf "$ext_mountpoint" $ext_linktarget
+
+  # fix for ext packages not installing to usr
+  #[ -d "$ext_mountpoint/usr/lib" ] || mkdir -p "$ext_mountpoint/usr/lib"
+  # [-L  "$ext_mountpoint/lib" ] || ln -sf "$ext_mountpoint/usr/lib" "$ext_mountpoint/lib"
+  
+   ext_create_path_fixer_tool
+
+   #make the new paths default active in /etc/profile
+    if  !  grep -q "$EXT_PATH_TOOL"  /etc/profile  ; then
+       echo "${initscript}: Including ext_path_fixer to /etc/profile"
+       echo ". $EXT_PATH_TOOL "  >> /etc/profile 
+    fi
+
+    if ! grep -q  "$EXT_PATH_TOOL" /etc/rc.common ; then
+    	echo "${initscript}: Including   ext_path_fixer to /etc/rc.common" 
+	sed "s|service.sh|service.sh\n\. $EXT_PATH_TOOL|" -i  /etc/rc.common
+    fi
+}
+
+ext_create_path_fixer_tool(){
+	#EXT_PATH_TOOL=/bin/ext_path_fixer
+	if [ ! -e $EXT_PATH_TOOL ] ; then
+	 	 echo "${initscript}: Creating $EXT_PATH_TOOL"
+		 echo "ENH_PATH=\"$ext_linktarget/bin:$ext_linktarget/sbin/:$ext_linktarget/usr/bin:$ext_linktarget/usr/sbin\"" >> $EXT_PATH_TOOL
+     	 	 echo "export PATH=\"\$PATH:\$ENH_PATH\"" >> $EXT_PATH_TOOL
+		 echo "ENH_LIB=\"$ext_mountpoint/lib:$ext_mountpoint/usr/lib\""  >>  $EXT_PATH_TOOL
+		 echo "export LD_LIBRARY_PATH=\"/lib:/usr/lib:\$ENH_LIB\"" >>  $EXT_PATH_TOOL
+		 chmod a+x $EXT_PATH_TOOL
+		
+	fi
+}
+
+
+ext_enhance_opkg() {
+
+  # prepare opkg for /usr/local
+  grep "^dest ext" /etc/opkg.conf \
+      || echo "dest ext $ext_mountpoint" >>/etc/opkg.conf
+
+}
+
+
+pb_undoconfig() {
+  # undo config changes
+  uci delete fstab.piratebox
+  uci delete fstab.pirateswap
+  uci commit
+  cp /rom/etc/opkg.conf /etc/
+  rm /usr/local
+  [ -d "$ext_mountpoint" ] && rmdir "$ext_mountpoint"
+  rm $EXT_PATH_TOOL
+  sed "s|\. $EXT_PATH_TOOL| |" -i /etc/rc.common
+  sed "s|\. $EXT_PATH_TOOL| |" -i /etc/profile
+}
