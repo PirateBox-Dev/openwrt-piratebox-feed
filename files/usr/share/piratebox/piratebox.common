@@ -123,22 +123,31 @@ pb_netconfig() {
   work_hostname="$pb_hostname"
   if [  -e $pb_inst_flag_mesh ] ; then
        echo "${initscript}: Mesh package detected, generating random hostname"
+       local old_name=$pb_random_hostname
        pb_generateHostname    
        work_hostname="$pb_random_hostname"
+       sed "s|pb_random_hostname=\"$old_name\"|pb_random_hostname=\"$work_hostname\"|" -i $ext_linktarget/etc/piratebox.config
   fi
  
   
   #Use random Stuff for systems hostname
   uci set "system.@system[0].hostname=$work_hostname"
 
+  #set MTU
+  #uci set "network.lan.mtu=1472"
+
+  pb_netv6config
+
   # Add piratebox.lan
   echo "127.0.0.1 $pb_hostname localhost." >/etc/hosts
   echo "$pb_ip $pb_hostname" >>/etc/hosts
+  echo "$pb_ipv6_static $pb_hostname " >> /etc/hosts
   
-  if [  "$pb_hostname" = "$work_hostname" ] ; then
+  if [  "$pb_hostname" != "$work_hostname" ] ; then
      #Add Random stuff
      echo "127.0.0.1 $pb_random_hostname ." >>/etc/hosts
      echo "$pb_ip $pb_random_hostname" >>/etc/hosts
+     echo "$pb_ipv6_dynamic $pb_random_hostname" >> /etc/hosts
    fi 
 
   uci set "network.lan.ipaddr=$pb_ip"
@@ -155,6 +164,49 @@ pb_netconfig() {
    /etc/init.d/firewall restart
    wifi
 
+}
+
+
+generate_v6() {
+  IF=$1
+  PREFIX="fd00"
+
+  test -n "$2" && PREFIX=$2
+
+  CURRENT_GEN=`ifconfig $IF |
+          grep "inet6 addr: fe80" |
+          sed  -n "s|^.*::\([^/]*\)/.*|\1|p" |
+          tr -d ":"`
+
+  FIXED=`echo ${CURRENT_GEN} | tr -d "\012" | 
+                 sed "s|\(....\)\(....\)\(....\)\(....\)|\1:\2:\3:\4|"`
+
+  echo "${initscript}: Extracted for $IF : $PREFIX::$FIXED "
+  V6_GEN_RESULT="$PREFIX::$FIXED"
+}
+
+
+
+pb_netv6config() {
+	if [ "$pb_ipv6_dynamic" == "generated" ] ; then
+		generate_v6 "br-lan"  "$pb_ipv6_prefix"
+		sed "s|pb_ipv6_dynamic=\"generated\"|pb_ipv6_dynamic=\"$V6_GEN_RESULT\"|" -i $ext_linktarget/etc/piratebox.config
+		pb_ipv6_dynamic=$V6_GEN_RESULT
+	fi
+
+	uci set "network.lan.ip6addr=$pb_ipv6_static"
+
+	local ipv6_add="$pb_ipv6_dynamic""$pb_ipv6_mask"
+
+	if   uci show network.@alias[0].ip6addr >> /dev/null  &&  uci show network.@alias[0].interface=lan  >> /dev/null   ;then
+		echo "${initscript}: It seems there is already an alias for br-lan - skipping network-config"
+	else
+		echo "${initscript}: Creating config/network entry for dyn. alias $ipv6_add" 
+		uci add network alias
+		uci set network.@alias[-1].interface=lan
+		uci set network.@alias[-1].ip6addr="$ipv6_add"
+		uci set network.@alias[-1].proto=static 
+	fi 
 }
 
 
@@ -203,9 +255,41 @@ pb_init() {
 
   echo "${initscript}: Fixing timezone in php config..."
   sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
+
+  if [ -e /etc/avahi ] ; then
+	echo "Avahi installation found. Brining our config via link in place"
+	if [ ! -e /etc/avahi.original ] ; then
+		mv /etc/avahi /etc/avahi.original 
+	fi
+	ln -s $pb_pbmount/conf/avahi /etc/avahi
+
+	echo "Enabling dbus & avahi services"
+	/etc/init.d/dbus enable
+	/etc/init.d/avahi-daemon enable
+	echo "Moving avahi-daemon beyond the startup of piratebox"
+	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon 
+  fi
  
 }
 
+pb_prepare_avahi() {
+  if [ -e /etc/avahi ] ; then
+	echo "Avahi installation found. Brining our config via link in place"
+	if [ ! -e /etc/avahi.original ] ; then
+		mv /etc/avahi /etc/avahi.original 
+	fi
+	ln -s $pb_pbmount/conf/avahi /etc/avahi
+
+	echo "Enabling dbus & avahi services"
+	/etc/init.d/dbus enable
+	/etc/init.d/avahi-daemon enable
+	echo "Moving avahi-daemon beyond the startup of piratebox"
+	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon
+  else
+	echo "/etc/avahi config folder not found.. skipping avahi prepare" 
+  fi
+
+}
 
 #Removes current image file and overwrite it with new one
 pb_updatePBImage () {
@@ -238,6 +322,25 @@ pb_init_image() {
 	  $pb_pbmount/bin/exchange_www.sh $pb_piratebox_conf  "$pb_www_alt"
  
     fi
+
+    echo "Apply OpenWRT ipv6  config to PirateBox-config.."
+    . $pb_pbmount/conf/ipv6.conf
+    sed "s|IPV6_IP=\"$IPV6_IP\"|IPV6_IP=\"$pb_ipv6_static$pb_ipv6_mask\"|" -i $pb_pbmount/conf/ipv6.conf
+    sed "s|IPV6_PREFIX=\"$IPV6_PREFIX\"|IPV6_PREFIX=\"$pb_ipv6_prefix\"|" -i  $pb_pbmount/conf/ipv6.conf
+    # [ ! -e /usr/sbin/radvd ]  && sed "s|IPV6_ENABLE=\"yes\"|IPV6_ENABLE=\"no\"|" -i $pb_pbmount/conf/ipv6.conf
+
+#---
+#  Node Configuration
+    if [ -e $pb_inst_flag_mesh ] ; then
+	    local node_config=$pb_pbmount/conf/node.conf
+	    . $node_config
+	    sed "s|NODE_CONFIG_ACTIVE='no'|NODE_CONFIG_ACTIVE='yes'|" -i $node_config
+	    sed "s|NODE_IPV6_IP='$NODE_IPV6_IP'|NODE_IPV6_IP='$pb_ipv6_dynamic'|" -i $node_config
+	    sed "s|NODE_IPV6_MASK='$NODE_IPV6_MASK'|NODE_IPV6_MASK='$pb_ipv6_mask'|" -i $node_config
+	    local short_name=`echo $pb_random_hostname | sed "s|\.$pb_hostname||" `
+	    sed "s|NODE_NAME='$NODE_NAME'|NODE_NAME='$short_name'|" -i  $node_config
+    fi
+
 
     touch $pb_flag_image_init_done
 }
