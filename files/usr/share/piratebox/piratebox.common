@@ -257,17 +257,7 @@ pb_init() {
   sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
 
   if [ -e /etc/avahi ] ; then
-	echo "Avahi installation found. Brining our config via link in place"
-	if [ ! -e /etc/avahi.original ] ; then
-		mv /etc/avahi /etc/avahi.original 
-	fi
-	ln -s $pb_pbmount/conf/avahi /etc/avahi
-
-	echo "Enabling dbus & avahi services"
-	/etc/init.d/dbus enable
-	/etc/init.d/avahi-daemon enable
-	echo "Moving avahi-daemon beyond the startup of piratebox"
-	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon 
+  	pb_prepare_avahi
   fi
  
 }
@@ -347,6 +337,11 @@ pb_init_image() {
 
 pb_start() {
   pb_mount pb
+
+  # that hides the static ip, where you can reach each box locally
+  #  from avahi
+  echo "Setting static PBx IP $pb_ipv6_static to scope local"
+  ip addr change $pb_ipv6_static  dev br-lan scope link
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
 #  mkdir -p $pb_share    
