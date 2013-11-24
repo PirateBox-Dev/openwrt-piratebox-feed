@@ -19,6 +19,11 @@ define Package/librarybox
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
 
+
+define Package/librarybo/conffiles
+/etc/piratebox.config
+endef
+
 define Package/librarybox/description
 	Turns your OpenWRT Router into a LibraryBox; see http://www.librarybox.us
 	LibraryBox is a PirateBox Fork
