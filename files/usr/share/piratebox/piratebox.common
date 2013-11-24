@@ -145,7 +145,6 @@ pb_netconfig() {
   
   if [  "$pb_hostname" != "$work_hostname" ] ; then
      #Add Random stuff
-     echo "127.0.0.1 $pb_random_hostname ." >>/etc/hosts
      echo "$pb_ip $pb_random_hostname" >>/etc/hosts
      echo "$pb_ipv6_dynamic $pb_random_hostname" >> /etc/hosts
    fi 
@@ -194,7 +193,8 @@ pb_netv6config() {
 		pb_ipv6_dynamic=$V6_GEN_RESULT
 	fi
 
-	uci set "network.lan.ip6addr=$pb_ipv6_static"
+	local ipv6_add="$pb_ipv6_static""$pb_ipv6_mask"
+	uci set "network.lan.ip6addr=$ipv6_add"
 
 	local ipv6_add="$pb_ipv6_dynamic""$pb_ipv6_mask"
 
@@ -256,9 +256,7 @@ pb_init() {
   echo "${initscript}: Fixing timezone in php config..."
   sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
 
-  if [ -e /etc/avahi ] ; then
-  	pb_prepare_avahi
-  fi
+  pb_prepare_avahi
  
 }
 
@@ -340,8 +338,8 @@ pb_start() {
 
   # that hides the static ip, where you can reach each box locally
   #  from avahi
-  echo "Setting static PBx IP $pb_ipv6_static to scope local"
-  ip addr change $pb_ipv6_static  dev br-lan scope link
+  echo "Setting static PBx IP $pb_ipv6_static to depricated"
+  ip addr change  $pb_ipv6_static   dev br-lan scope link preferred_lft 0
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
 #  mkdir -p $pb_share    
