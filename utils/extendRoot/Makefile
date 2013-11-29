@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.6.0
-PKG_RELEASE:=3
+PKG_VERSION:=0.7.1
+PKG_RELEASE:=1
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -48,7 +48,7 @@ endef
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi +extendRoot-dbus
 endef
 
 define Package/extendRoot-php
@@ -86,6 +86,13 @@ define Package/extendRoot-avahi
 	TITLE:=avahi toolset  on extendRoot
 	DEPENDS:=extendRoot +avahi-daemon +avahi-utils
 endef
+
+define Package/extendRoot-minidlna
+        $(call Package/extendRoot/Default)
+        TITLE:=minidlna  on extendRoot
+        DEPENDS:=extendRoot +minidlna
+endef
+
 
 define Package/extendRoot-avahi/description
 	not valid as a direct install on root.
@@ -139,6 +146,11 @@ endef
 define Package/extendRoot-proftpd/description
 	not valid as direct isntall on root
 	Installs proftpd to extend root and links needed folder
+endef
+
+define Package/extendRoot-minidlna/description
+	not valid as direct isntall on root
+	Installs minidlna to extend root and links needed folder
 endef
 
 define Package/extendRoot/postinst
@@ -306,6 +318,21 @@ define Package/extendRoot-avahi/prerm
 	rm /etc/avahi
 endef
 
+define Package/extendRoot-minidlna/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/config/minidlna	/etc/config
+	ln -s $$ext_linktarget/etc/init.d/minidlna  /etc/init.d
+	ln -s $$ext_linktarget/usr/bin/minidlna  /usr/bin
+endef
+
+define Package/extendRoot-minidlna/prerm
+	#!/bin/sh
+	rm /etc/config/minidlna
+	rm /etc/init.d/minidlna
+	rm /usr/bin/minidlna
+endef
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -333,4 +360,5 @@ $(eval $(call BuildPlugin,extendRoot-librarybox))
 $(eval $(call BuildPlugin,extendRoot-proftpd))
 $(eval $(call BuildPlugin,extendRoot-dbus))
 $(eval $(call BuildPlugin,extendRoot-avahi))
+$(eval $(call BuildPlugin,extendRoot-minidlna))
 
