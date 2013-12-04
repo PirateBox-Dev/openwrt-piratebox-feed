@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
 PKG_VERSION:=2.0.0
-PKG_RELEASE:=32
+PKG_RELEASE:=33
 
 
 
@@ -123,8 +123,63 @@ define Package/librarybox/preinst
 	   /etc/init.d/piratebox stop
 	fi
 
+        if [ -z $$PKG_ROOT ] ; then
+                echo "Attention, since package piratebox version 1.0, piratebox needs to be installed on installation destination "ext", which is created by the package extendRoot. See http://piratebox.aod-rpg.de for more informations"
+                echo " ... " && sleep 2
+                echo " ... " && sleep 2
+        fi
+
 	exit 0
 endef
+
+
+define Package/piratebox/prerm
+        #!/bin/sh
+        # Revert-Changes
+        
+        . /usr/share/piratebox/piratebox.common
+
+
+        if [ -e /etc/init.d/luci_fixtime  ] ; then
+           /etc/init.d/luci_fixtime enable
+        fi
+
+        if [ -e /etc/init.d/luci_dhcp_migrate ] ; then
+           /etc/init.d/luci_dhcp_migrate enable
+        fi
+
+        if [ -e /etc/init.d/uhttpd ] ; then
+           /etc/init.d/uhttpd enable
+        fi
+
+         /etc/init.d/watchdog enable
+         /etc/init.d/dnsmasq enable
+
+        /etc/init.d/piratebox disable
+        /etc/init.d/piratebox nodns
+        #Stop Piratebox
+        /etc/init.d/piratebox stop
+
+        # undo configuration
+        pb_undoconfig
+
+        echo "Please reboot for changes to take effect."
+endef
+
+
+define  Package/piratebox/postrm
+        #!/bin/sh
+
+        # remove links, if exists
+
+        [ -e /etc/piratebox.config ] && rm  /etc/piratebox.config  
+        [ -e /etc/init.d/piratebox ] && rm  /etc/init.d/piratebox
+
+        exit 0
+
+endef 
+
+
 
 define Build/Compile
 endef
