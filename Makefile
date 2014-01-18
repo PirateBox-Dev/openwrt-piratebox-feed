@@ -102,12 +102,6 @@ define Package/librarybox/postinst
 	if [ $$setup_run  -eq 1 ] ; then
 	  # give some user feedback
 	  echo ""
-  	  echo "PirateBox wireless SSID: $$pb_wireless_ssid "
-	  echo "PirateBox DNS and hostname: $$pb_hostname "
-   	  echo "  hostname with unique suffix is: "  `uci get system.@system[0].hostname`
-   	  echo "PirateBox LAN IP address: $$pb_ip"
-   	  echo "PirateBox shared directory: $$pb_share"
-	  echo
    	  echo "Setup complete, PirateBox started."
    	  echo "You can remove the WAN connection now."
    	  echo "Please reboot your PirateBox now: "

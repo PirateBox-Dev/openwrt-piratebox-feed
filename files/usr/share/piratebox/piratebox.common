@@ -154,10 +154,6 @@ pb_netconfig() {
 
    uci commit
  
-   # activate config changes
-   /etc/init.d/firewall restart
-   wifi
-
 }
 
 
