@@ -127,7 +127,7 @@ define Package/librarybox/preinst
 endef
 
 
-define Package/piratebox/prerm
+define Package/librarybox/prerm
         #!/bin/sh
         # Revert-Changes
         
@@ -161,7 +161,7 @@ define Package/piratebox/prerm
 endef
 
 
-define  Package/piratebox/postrm
+define  Package/librarybox/postrm
         #!/bin/sh
 
         # remove links, if exists
