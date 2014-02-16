@@ -1,0 +1,346 @@
+#############################################################################
+# PirateBox helper functions
+
+if [ -e /etc/ext.config ] ;  then 
+  . /etc/ext.config
+  . $ext_linktarget/etc/piratebox.config
+else
+  . /etc/piratebox.config
+fi
+
+
+
+
+
+pb_setup() {
+
+   pb_netconfig 
+ 
+   touch $pb_inst_done
+}
+
+pb_nodns() {
+  # disable local DNS per dnsmasq
+  cp /tmp/resolv.conf.auto /tmp/resolv.conf
+}
+
+
+pb_ismounted() {
+  mount | grep "on $1 " >/dev/null
+}
+
+pb_mount() {
+  parts=$*
+  [ "$parts" == "-a" ] && parts="pb"
+  for part in $*
+  do
+    case $part in
+      pb) 
+          pb_ismounted "$pb_pbmount" && continue
+	  pb_mount usb
+	  [ -d "$pb_pbmount" ] || mkdir -p "$pb_pbmount"
+	  if ! mount -o loop,rw,sync "$pb_pbimg" "$pb_pbmount"
+	  then
+	    echo "${initscript}: ERROR: unable to mount piratebox image" >&2
+	    exit 5
+	  fi
+	  ;;
+    esac
+  done
+}
+
+pb_umount() {
+  parts=$*
+  [ "$parts" == "-a" ] && parts="pb"
+  for part in $*
+  do
+    case $part in
+      pb)
+          losetup -d /dev/loop1 &>/dev/null
+	  pb_ismounted "$pb_pbmount" || continue
+	  if ! umount "$pb_pbmount"
+	  then 
+	     pb_stop &>/dev/null
+	     sleep 2
+	      if ! umount "$pb_pbmount"
+	      then
+	        echo "${initscript}: WARNING: unable to umount piratebox image" >&2
+	     fi
+	  fi
+	  losetup -d /dev/loop1
+	  ;;
+    esac
+  done
+}
+
+pb_uciadd() {
+  local config=$1 ; shift
+  local section=$1 ; shift
+  local type=$1 ; shift
+  [ -e "/etc/config/$config" ] || touch "/etc/config/$config"
+  uci show "$config.$section" &>/dev/null \
+    || uci add "$config $section" &>/dev/null
+  uci set "$config.$section=$type"
+}
+
+pb_uciset() {
+  local config=$1 ; shift
+  local section=$1 ; shift
+  local type=$1 ; shift
+  pb_uciadd $config $section $type
+  for opt in "$@"
+  do
+    uci set "$config.$section.$opt"
+  done
+  uci commit
+}
+
+
+
+#---------------------------------------------------------
+# Generates a random suffix for PirateBox domain names
+#   is used if the piratebox is running in mesh
+#---------------------------------------------------------
+pb_generateHostname() {
+  local suffix=`</dev/urandom tr -dc a-zA-Z1-9 | head -c8`
+  pb_random_hostname="$suffix.$pb_hostname"
+}
+
+pb_setSSID() {
+    local ssid=$1 ; shift
+    uci set "wireless.@wifi-iface[0].ssid=$ssid"
+}
+
+
+ # reconfigure network
+pb_netconfig() {
+  
+  work_hostname="$pb_hostname"
+  if [  -e $pb_inst_flag_mesh ] ; then
+       echo "${initscript}: Mesh package detected, generating random hostname"
+       local old_name=$pb_random_hostname
+       pb_generateHostname    
+       work_hostname="$pb_random_hostname"
+       sed "s|pb_random_hostname=\"$old_name\"|pb_random_hostname=\"$work_hostname\"|" -i $ext_linktarget/etc/piratebox.config
+  fi
+ 
+  
+  #Use random Stuff for systems hostname
+  uci set "system.@system[0].hostname=$work_hostname"
+
+  #set MTU
+  #uci set "network.lan.mtu=1472"
+
+  pb_netv6config
+
+  # Add piratebox.lan
+  echo "127.0.0.1 $pb_hostname localhost." >/etc/hosts
+  echo "$pb_ip $pb_hostname" >>/etc/hosts
+  echo "$pb_ipv6_static $pb_hostname " >> /etc/hosts
+  
+  if [  "$pb_hostname" != "$work_hostname" ] ; then
+     #Add Random stuff
+     echo "$pb_ip $pb_random_hostname" >>/etc/hosts
+     echo "$pb_ipv6_dynamic $pb_random_hostname" >> /etc/hosts
+   fi 
+
+  uci set "network.lan.ipaddr=$pb_ip"
+  uci set "network.lan.proto=static"
+  #CAVE: wireless config might be platform specific
+  uci set "wireless.radio0.disabled=0"
+  uci set "wireless.radio0.txpower=25"
+
+  pb_setSSID "$pb_wireless_ssid"
+
+   uci commit
+ 
+}
+
+
+generate_v6() {
+  IF=$1
+  PREFIX="fd00"
+
+  test -n "$2" && PREFIX=$2
+
+  FIXED=$(hexdump -n8 -e '/2 ":%03x" ' /dev/random )
+
+  echo "${initscript}: Generated IPv6 suffix  for $IF : $PREFIX:$FIXED "
+  V6_GEN_RESULT="$PREFIX:$FIXED"
+}
+
+
+
+pb_netv6config() {
+	if [ "$pb_ipv6_dynamic" == "generated" ] ; then
+		generate_v6 "br-lan"  "$pb_ipv6_prefix"
+		sed "s|pb_ipv6_dynamic=\"generated\"|pb_ipv6_dynamic=\"$V6_GEN_RESULT\"|" -i $ext_linktarget/etc/piratebox.config
+		pb_ipv6_dynamic=$V6_GEN_RESULT
+	fi
+
+	local ipv6_add="$pb_ipv6_static""$pb_ipv6_mask"
+	uci set "network.lan.ip6addr=$ipv6_add"
+
+	local ipv6_add="$pb_ipv6_dynamic""$pb_ipv6_mask"
+
+	if   uci show network.@alias[0].ip6addr >> /dev/null  &&  uci show network.@alias[0].interface=lan  >> /dev/null   ;then
+		echo "${initscript}: It seems there is already an alias for br-lan - skipping network-config"
+	else
+		echo "${initscript}: Creating config/network entry for dyn. alias $ipv6_add" 
+		uci add network alias
+		uci set network.@alias[-1].interface=lan
+		uci set network.@alias[-1].ip6addr="$ipv6_add"
+		uci set network.@alias[-1].proto=static 
+	fi 
+}
+
+
+pb_undoconfig() {
+  # undo config changes
+  uci delete dhcp.piratebox
+  uci delete firewall.piratebox
+  uci delete fstab.pirateimage
+  uci set "system.@system[0].hostname=OpenWRT"
+  uci set "network.lan.ipaddr=192.168.1.1"
+  uci commit
+  cp /rom/etc/hosts /etc/
+  cp /rom/etc/init.d/dnsmasq /etc/init.d/
+  [ -d "$pb_pbmount"  ] && rmdir "$pb_pbmount"
+}
+
+
+pb_mkpbimg () {
+   pb_umount pb
+   [ -d "$(dirname $pb_pbimg)" ] || mkdir -p "$(dirname $pb_pbimg)"
+   [ -d "$(dirname $pb_pb_srcImg)" ] || mkdir -p "$(dirname $pb_pb_srcImg)"
+   if [ ! -e $pb_pb_srcImg ] ; then
+      echo "${initscript}: No PirateBox Image file found... loading from Internet"
+      wget -O $pb_pb_srcImg  $pb_pb_srcImg_url 
+      if [ $?  -ne 0 ] ; then
+         echo "${initscript}: ERROR: wget failed... cancel"
+	 #remove a possible defect file
+	 rm -f $pb_pb_srcImg
+	 exit 5
+      fi
+   fi
+   #gzip -dc  "$pb_pb_srcImg" > "$pb_pbimg" 
+   tar xzO -f "$pb_pb_srcImg" > "$pb_pbimg" 
+   pb_uciset fstab pirateimage mount \
+        target=$pb_pbmount \
+	device=$pb_pbimg \
+	options=loop \
+	enabled=1
+}
+
+pb_init() {
+
+  echo "${initscript}: Creating piratebox loop image..."
+  pb_mkpbimg
+
+  echo "${initscript}: Fixing timezone in php config..."
+  sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
+
+  pb_prepare_avahi
+ 
+}
+
+pb_prepare_avahi() {
+  if [ -e /etc/avahi ] ; then
+	echo "Avahi installation found. Brining our config via link in place"
+	if [ ! -e /etc/avahi.original ] ; then
+		mv /etc/avahi /etc/avahi.original 
+	fi
+	ln -s $pb_pbmount/conf/avahi /etc/avahi
+
+	echo "Enabling dbus & avahi services"
+	/etc/init.d/dbus enable
+	/etc/init.d/avahi-daemon enable
+	echo "Moving avahi-daemon beyond the startup of piratebox"
+	sed 's|START=61|START=81|' -i /etc/init.d/avahi-daemon
+  else
+	echo "/etc/avahi config folder not found.. skipping avahi prepare" 
+  fi
+
+}
+
+#Removes current image file and overwrite it with new one
+pb_updatePBImage () {
+    echo "${initscript}: Unmounting $pb_pbmount"
+    pb_umount pb  
+    [ ! -d "$pb_usbdir" ] && ( echo "${initscript}: ERROR: Seems the USB Stick ist not available" && exit 99 )         
+    echo "${initscript}: Removing old image file if exists"
+    rm  -f $pb_pbimg
+    echo "${initscript}: Create new Image file"
+    pb_mkpbimg 
+    echo "${initscript}: Done"
+}
+
+#contains OpenWRT specific initialization, which was before 0.7 included in PirateBox scripts itself
+pb_init_image() {
+    $pb_pbmount/bin/hooks/hook_pre_openwrt_init.sh  "$pb_piratebox_conf" 
+
+
+    echo "-------------- Initialize PirateBoxScripts -----------"
+    rm -r $pb_pbmount/share
+    ln -sf $pb_usbdir $pb_pbmount/share
+    #chmod a+rw $CHATFILE  #should not be needed anymore
+
+    if [ -d $pb_usbdir/www_alt ] ; then
+          echo "----------------------------------------------------"
+          echo "####      Alternative www folder found          ####"
+          echo "####          $pb_www_alt                ####"
+          echo "####         switching directories              ####"
+          echo "----------------------------------------------------"
+	  $pb_pbmount/bin/exchange_www.sh $pb_piratebox_conf  "$pb_www_alt"
+ 
+    fi
+
+    echo "Apply OpenWRT ipv6  config to PirateBox-config.."
+    . $pb_pbmount/conf/ipv6.conf
+    sed "s|IPV6_IP=\"$IPV6_IP\"|IPV6_IP=\"$pb_ipv6_static$pb_ipv6_mask\"|" -i $pb_pbmount/conf/ipv6.conf
+    sed "s|IPV6_PREFIX=\"$IPV6_PREFIX\"|IPV6_PREFIX=\"$pb_ipv6_prefix\"|" -i  $pb_pbmount/conf/ipv6.conf
+    # [ ! -e /usr/sbin/radvd ]  && sed "s|IPV6_ENABLE=\"yes\"|IPV6_ENABLE=\"no\"|" -i $pb_pbmount/conf/ipv6.conf
+
+#---
+#  Node Configuration
+    if [ -e $pb_inst_flag_mesh ] ; then
+	    local node_config=$pb_pbmount/conf/node.conf
+	    . $node_config
+	    sed "s|NODE_CONFIG_ACTIVE='no'|NODE_CONFIG_ACTIVE='yes'|" -i $node_config
+	    sed "s|NODE_IPV6_IP='$NODE_IPV6_IP'|NODE_IPV6_IP='$pb_ipv6_dynamic'|" -i $node_config
+	    sed "s|NODE_IPV6_MASK='$NODE_IPV6_MASK'|NODE_IPV6_MASK='$pb_ipv6_mask'|" -i $node_config
+	    local short_name=`echo $pb_random_hostname | sed "s|\.$pb_hostname||" `
+	    sed "s|NODE_NAME='$NODE_NAME'|NODE_NAME='$short_name'|" -i  $node_config
+    fi
+
+
+    touch $pb_flag_image_init_done
+}
+
+pb_start() {
+  pb_mount pb
+
+  # that hides the static ip, where you can reach each box locally
+  #  from avahi
+  echo "Setting static PBx IP $pb_ipv6_static to depricated"
+  ip addr change  $pb_ipv6_static   dev br-lan scope link preferred_lft 0
+
+   [ ! -f $pb_flag_image_init_done ] && pb_init_image 
+#  mkdir -p $pb_share    
+  $pb_pbmount/init.d/piratebox_alt start
+}
+
+
+pb_stop() {
+  # killing all piratebox processes
+  $pb_pbmount/init.d/piratebox_alt stop
+
+  sleep 3
+  pb_umount pb
+}
+
+pb_stop_and_keep(){
+   $pb_pbmount/init.d/piratebox_alt stop
+}
+
+
