@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
-PKG_VERSION:=0.2.0
+PKG_VERSION:=0.4.2
 PKG_RELEASE:=7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/LibraryBox-Dev/usb-config-scripts/archive/
-PKG_MD5SUM:=f130d7dc8e31f71a5598fc1d8cf67ed1
+PKG_MD5SUM:=3fa48e7b2649872ce318f54c52cbb69a
 PKG_CAT:=zcat
 
 
@@ -55,6 +55,10 @@ define Package/usb-config-scripts-librarybox/postinst
 	ln -s ../modules.available/61_librarybox_shoutbox.sh $$PKG_ROOT/opt/autocfg/modules.enabled
 	#- default piratebox
 	ln -s ../modules.available/50_piratebox_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+        #- PirateBox mesh functionality
+	ln -s ../modules.available/51_openwrt_node_ip.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/51_piratebox_node_ip.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/52_piratebox_node_name.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
 endef
 
 define Build/Compile
