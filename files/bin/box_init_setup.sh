@@ -11,11 +11,6 @@ TIMESAVE_SCRIPT="/opt/piratebox/bin/timesave.sh"
 FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
 FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
 
-
-FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
-FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
-
-
 mainmenu() {
 
 
