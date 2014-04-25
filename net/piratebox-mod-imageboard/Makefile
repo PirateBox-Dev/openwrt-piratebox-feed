@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox-mod-imageboard
-PKG_VERSION:=0.1.1
+PKG_VERSION:=0.1.2
 PKG_RELEASE:=1
 
 
@@ -31,6 +31,8 @@ define Package/piratebox-mod-imageboard/postinst
 	
 	ln -s $$ext_linktarget/usr/bin/perl /usr/bin/perl
 	ln -s $$ext_linktarget/usr/lib/perl* /usr/lib/
+	#hotfix for some weired path issues
+	ln -s  $$ext_linktarget/usr/bin/unzip /usr/bin
 	#start the init from piratebox scripts
         . /etc/piratebox.config
 	KAREHA_RELEASE=kareha_3.1.4.zip
@@ -50,6 +52,7 @@ define Package/piratebox-mod-imageboard/prerm
 		rm /usr/bin/perl
 		rm /usr/lib/perl*
 	fi
+	[[ -L /usr/bin/unzip ]] && rm /usr/bin/unzip
 endef
 
 define Build/Compile
