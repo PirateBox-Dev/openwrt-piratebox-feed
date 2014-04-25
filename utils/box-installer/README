@@ -43,3 +43,12 @@ After everthing is done (valid or not), auto_package is renamed into auto_packag
 On a later start of the script, extendRoot does not get initialized anymore, so that would enable you to install additional packages later (maybe....).
 
 
+Signaling on Router
+-------------------
+
+If available and possible during the following steps, LED signals are given:
+
+	1.  Start of extendRoot init ==>> Steady blinking wifi LED  (can be all available WLAN-LEDs)
+	2.  END   of extendRoot init ==>> Steady bright wifi LED
+	3.  Start of package installation ==> Steady blinking USB LED
+	4.  END   of package installation ==> Steady brigh USB LED
