@@ -21,8 +21,7 @@ LED_PACKAGE=/sys/class/leds/*[usb,3g]
 
 _signaling_start(){
 	if [ -e $1/trigger ] ; then
-		[ grep -q timer $1/trigger ] && \
-			echo "timer" > $1/trigger
+		for file in  $1 ; do echo "timer" > $file/trigger ; done
 	fi
 	return 0
 }
@@ -30,8 +29,9 @@ _signaling_start(){
 _signaling_stop(){
 	if [ -e $1/trigger ] ; then
 		echo "none" > $1/trigger
+		for file in  $1 ; do echo "none" > $file/trigger ; done
 	fi
-	[ -e $1/brightness ] && echo "1" > $1/brightness
+	[ -e $1/brightness ] && for file in  $1 ; do echo "1" > $file/brightness ; done
 	return 0
 }
 
