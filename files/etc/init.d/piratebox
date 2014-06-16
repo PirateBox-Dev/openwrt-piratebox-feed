@@ -69,7 +69,7 @@ stop_keep() {
 
 timesave() {
         . $ext_linktarget/usr/share/piratebox/timesave.common
-	pb_install_timesave $pb_piratebox_conf $pb_timesave_script
+	pb_install_timesave $pb_timesave_script  $pb_piratebox_conf
 }
 
 avahi() {
