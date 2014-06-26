@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox-mod-imageboard
-PKG_VERSION:=0.1.2
+PKG_VERSION:=0.1.3
 PKG_RELEASE:=1
 
 
@@ -29,10 +29,10 @@ define Package/piratebox-mod-imageboard/postinst
         #stuff needed because there is no ext-perl package
 	. /etc/ext.config
 	
-	ln -s $$ext_linktarget/usr/bin/perl /usr/bin/perl
-	ln -s $$ext_linktarget/usr/lib/perl* /usr/lib/
+	[[ ! -e /usr/bin/perl ]]  && ln -s $$ext_linktarget/usr/bin/perl /usr/bin/perl
+	[[ ! -e /usr/lib/perl* ]] && ln -s $$ext_linktarget/usr/lib/perl* /usr/lib/
 	#hotfix for some weired path issues
-	ln -s  $$ext_linktarget/usr/bin/unzip /usr/bin
+	[[ ! -e /usr/bin/unzip ]] && ln -s  $$ext_linktarget/usr/bin/unzip /usr/bin
 	#start the init from piratebox scripts
         . /etc/piratebox.config
 	KAREHA_RELEASE=kareha_3.1.4.zip
