@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=7
+PKG_VERSION:=1.0.1
+PKG_RELEASE:=8
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -69,11 +69,12 @@ define Package/piratebox/postinst
 
 	##only do network config etc, when first install
 	setup_run=0
-	if [ ! -e  $$pb_inst_done ]  ; then
+	if [[ ! -e  $$PKG_ROOT/etc/piratebox.install_done ]]  ; then
 	    # configure USB, network
 	     /etc/init.d/piratebox setup
 	     [ $$? -ne 0 ] && exit 99
 	     setup_run=1
+	    touch $$PKG_ROOT/etc/piratebox.install_done 
 	fi
 	# prepare USB partition and install PirateBox
 	/etc/init.d/piratebox init
@@ -86,7 +87,7 @@ define Package/piratebox/postinst
  	echo " for further installation"
 	/etc/init.d/piratebox  stop_keep
  
-	if [ $$setup_run  -eq 1 ] ; then
+	if [[ "$$setup_run"  -eq "1" ]] ; then
 	  # give some user feedback
 	  echo ""
   	  echo "PirateBox wireless SSID: $$pb_wireless_ssid "
