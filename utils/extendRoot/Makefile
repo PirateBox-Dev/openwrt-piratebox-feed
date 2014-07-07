@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.8.0
-PKG_RELEASE:=1
+PKG_VERSION:=0.8.1
+PKG_RELEASE:=3
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -54,7 +54,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip
+   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session  
 endef
 
 define Package/extendRoot-php-fastcgi
@@ -92,7 +92,6 @@ define Package/extendRoot-minidlna
         TITLE:=minidlna  on extendRoot
         DEPENDS:=extendRoot +minidlna
 endef
-
 
 define Package/extendRoot-avahi/description
 	not valid as a direct install on root.
@@ -208,6 +207,7 @@ define Package/extendRoot-lighttpd/prerm
 	rm /usr/sbin/lighttpd
 	rm /usr/lib/lighttpd
 	rm /etc/init.d/lighttpd
+	exit 0
 endef
 
 define Package/extendRoot-php/postinst
@@ -236,6 +236,7 @@ define Package/extendRoot-php/prerm
 	rm /etc/php.ini
 	rm /etc/php5
 	rm /usr/bin/php-cgi
+	exit 0
 endef
 
 define Package/extendRoot-php-fastcgi/postinst
@@ -244,6 +245,7 @@ define Package/extendRoot-php-fastcgi/postinst
 	ln -s  $$ext_linktarget/etc/config/php5-fastcgi /etc/config/
 	ln -s  $$ext_linktarget/etc/init.d/php5-fastcgi /etc/init.d/
 	ln -s  $$ext_linktarget/usr/local/usr/bin/php-fcgi /usr/bin/
+	exit 0
 endef
 
 define Package/extendRoot-php-fastcgi/prerm
@@ -251,6 +253,7 @@ define Package/extendRoot-php-fastcgi/prerm
 	rm  /etc/config/php5-fastcgi
 	rm  /etc/init.d/php5-fastcgi
 	rm  /usr/bin/php-fcgi 
+	exit 0
 endef
 
 
@@ -260,11 +263,13 @@ define Package/extendRoot-zoneinfo/postinst
 	. /etc/ext.config
 	mkdir -p /usr/share
 	ln -s $$ext_linktarget/usr/share/zoneinfo /usr/share
+	exit 0
 endef	
 
 define Package/extendRoot-zoneinfo/prerm
 	#!/bin/sh
 	rm /usr/share/zoneinfo
+	exit 0
 endef
 
 define Package/extendRoot-proftpd/postinst
@@ -275,6 +280,7 @@ define Package/extendRoot-proftpd/postinst
 	ln -s $$ext_linktarget/usr/sbin/proftpd /usr/sbin
 	ln -s $$ext_linktarget/usr/sbin/ftpshut /usr/sbin
 	ln -s $$ext_linktarget/usr/sbin/in.proftpd /usr/sbin
+	exit 0
 endef
 
 define Package/extendRoot-proftpd/prerm
@@ -284,6 +290,7 @@ define Package/extendRoot-proftpd/prerm
 	rm /usr/sbin/proftpd 
 	rm /usr/sbin/ftpshut
 	rm /usr/sbin/in.proftpd 
+	exit 0
 endef
 
 define Package/extendRoot-dbus/postinst
@@ -294,6 +301,7 @@ define Package/extendRoot-dbus/postinst
 	ln -s $$ext_linktarget/usr/bin/dbus-uuidgen /usr/bin
 	ln -s $$ext_linktarget/usr/bin/dbus-launch  /usr/bin
 	ln -s $$ext_linktarget/etc/init.d/dbus	    /etc/init.d
+	exit 0
 endef
 
 define Package/extendRoot-dbus/prerm
@@ -303,6 +311,7 @@ define Package/extendRoot-dbus/prerm
 	rm /usr/bin/dbus-uuidgen
 	rm /usr/bin/dbus-launch
 	rm /etc/init.d/dbus 
+	exit 0
 endef
 
 define Package/extendRoot-avahi/postinst
@@ -310,12 +319,14 @@ define Package/extendRoot-avahi/postinst
 	. /etc/ext.config
 	ln -s $$ext_linktarget/etc/avahi 	/etc
 	ln -s $$ext_linktarget/etc/init.d/avahi-daemon /etc/init.d
+	exit 0
 endef
 
 define Package/extendRoot-avahi/prerm
 	#!/bin/sh
 	rm /etc/init.d/avahi-daemon
 	rm /etc/avahi
+	exit 0
 endef
 
 define Package/extendRoot-minidlna/postinst
@@ -324,6 +335,7 @@ define Package/extendRoot-minidlna/postinst
 	ln -s $$ext_linktarget/etc/config/minidlna	/etc/config
 	ln -s $$ext_linktarget/etc/init.d/minidlna  /etc/init.d
 	ln -s $$ext_linktarget/usr/bin/minidlna  /usr/bin
+	exit 0
 endef
 
 define Package/extendRoot-minidlna/prerm
@@ -331,6 +343,7 @@ define Package/extendRoot-minidlna/prerm
 	rm /etc/config/minidlna
 	rm /etc/init.d/minidlna
 	rm /usr/bin/minidlna
+	exit 0
 endef
 
 define Package/extendRoot/install
