@@ -21,9 +21,10 @@ if  [ -e /mnt/usb/install/auto_package ] ||  !  /etc/init.d/ext enabled  ; then
 		head -n 1 $auto_package  >> $auto_package_done
 		tail -n +2 $auto_package > /tmp/auto_install_new
 		mv /tmp/auto_install_new $auto_package
-	else
-  		mv $auto_package  $auto_package_done
 	fi
+
+	# Always move the first line only
+	head -n 1 $auto_package  >> $auto_package_done
 
 	## Copy log to USB disc
 	echo "$0 : Logging install log to USB-Stick"
