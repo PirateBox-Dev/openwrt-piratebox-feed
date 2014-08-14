@@ -3,8 +3,9 @@
 NAME=ext_mnt
 START=40               #39 = usb
 STOP=79
-EXTRA_COMMANDS="init"
-EXTRA_HELP="	init	    Mount USB and install ext_mnt + flash on a fresh USB disk"
+EXTRA_COMMANDS="init is_ready"
+EXTRA_HELP="	init	    Mount USB and install ext_mnt + flash on a fresh USB disk
+        is_ready    Returns 0 , when installation destination is available"
 
 . /usr/share/ext/ext.common
 
@@ -27,3 +28,6 @@ stop() {
   ext_umount swap ext usb
 }
 
+is_ready(){
+  ext_is_ready
+}

@@ -64,8 +64,8 @@ ext_usbconfig() {
   ext_uciset fstab ext1  mount \
     target=$ext_usbmount \
     device=$ext_usbdevice \
-    fstype=vfat \
-    options=rw,sync,umask=0 \
+    fstype=auto \
+    options=$ext_usbmount_options \
     enabled_fsck=0 \
     enabled=1
 
@@ -98,7 +98,7 @@ ext_mount() {
       usb)
 	  ext_ismounted "$ext_usbmount" && continue
 	  [ -d "$ext_usbmount" ] || mkdir -p "$ext_usbmount"
-          if ! mount -o umask=0,noatime,rw "$ext_usbdevice" "$ext_usbmount"
+          if ! mount -o '$ext_usbmount_options' "$ext_usbdevice" "$ext_usbmount"
           then
             echo "${initscript}: ERROR: unable to mount USB storage" >&2
             exit 5
@@ -215,7 +215,7 @@ ext_needextimg() {
       echo "       DO NOT overwrite the file!"
       echo " "
       echo " Do you want to reinitiate your USB and "
-      echo  -n " overwrite the file? ( y / n) "
+      echo  -n " overwrite the file? ( Y / n) "
       read answer
 
       if [ "$answer" = "n" ]  ; then
@@ -312,4 +312,8 @@ pb_undoconfig() {
   rm $EXT_PATH_TOOL
   sed "s|\. $EXT_PATH_TOOL| |" -i /etc/rc.common
   sed "s|\. $EXT_PATH_TOOL| |" -i /etc/profile
+}
+
+ext_is_ready(){
+     ext_ismounted $ext_mountpoint 
 }
