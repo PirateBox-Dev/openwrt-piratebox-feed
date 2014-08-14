@@ -40,7 +40,7 @@ calc_next_step() {
 	 'run_prepare_extendRoot') NEXT_STEP="run_init_extendRoot" ;;
 	 'run_init_extendRoot') NEXT_STEP="run_signaling_extendRoot_stop" ;;
 	 'run_signaling_extendRoot_stop') NEXT_STEP="run_test_installation_destination" ;;
-	 'run_test_installation_destination') NEXT_STEP="run_signaling_package_start" ;;
+	 'run_test_installation_destination') NEXT_STEP='run_fake_opkg_update' ;;
 	 'run_fake_opkg_update') NEXT_STEP="run_signaling_package_start" ;;
 	 'run_signaling_package_start') NEXT_STEP="run_install_package" ;;
 	 'run_install_package') NEXT_STEP="run_signaling_package_stop" ;;
