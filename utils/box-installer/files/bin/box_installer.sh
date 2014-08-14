@@ -15,23 +15,19 @@ NEXT_STEP="run_test"
 ALL_STEPS="yes"
 
 LED_EXTENDROOT=/sys/class/leds/*wlan
-LED_PACKAGE=/sys/class/leds/*[usb,3g]
+LED_PACKAGE_1=/sys/class/leds/*3g
+LED_PACKAGE_2=/sys/class/leds/*usb
 
 
 
 _signaling_start(){
-	if [ -e $1/trigger ] ; then
-		for file in  $1 ; do echo "timer" > $file/trigger ; done
-	fi
+	for file in  $1 ; do echo "timer" > $file/trigger ; done
 	return 0
 }
 
 _signaling_stop(){
-	if [ -e $1/trigger ] ; then
-		echo "none" > $1/trigger
-		for file in  $1 ; do echo "none" > $file/trigger ; done
-	fi
-	[ -e $1/brightness ] && for file in  $1 ; do echo "1" > $file/brightness ; done
+	for file in  $1 ; do echo "none" > $file/trigger ; done
+	for file in  $1 ; do echo "1" > $file/brightness ; done
 	return 0
 }
 
@@ -43,7 +39,8 @@ calc_next_step() {
 	 'run_signaling_extendRoot_start') NEXT_STEP="run_prepare_extendRoot" ;;
 	 'run_prepare_extendRoot') NEXT_STEP="run_init_extendRoot" ;;
 	 'run_init_extendRoot') NEXT_STEP="run_signaling_extendRoot_stop" ;;
-	 'run_signaling_extendRoot_stop') NEXT_STEP="run_fake_opkg_update" ;;
+	 'run_signaling_extendRoot_stop') NEXT_STEP="run_test_installation_destination" ;;
+	 'run_test_installation_destination') NEXT_STEP="run_signaling_package_start" ;;
 	 'run_fake_opkg_update') NEXT_STEP="run_signaling_package_start" ;;
 	 'run_signaling_package_start') NEXT_STEP="run_install_package" ;;
 	 'run_install_package') NEXT_STEP="run_signaling_package_stop" ;;
@@ -101,6 +98,27 @@ run_signaling_extendRoot_stop(){
 	_signaling_stop "$LED_EXTENDROOT"
 }
 
+run_test_installation_destination(){
+	echo "$0 : Testing if installation destination by extendRoot is available."
+	/etc/init.d/ext is_ready
+	if [ $? ] ; then
+		echo "$0 : Installation destination is available."
+	else
+		echo "$0 : Something happend to extendRoot filesystem. Printing debug output..."
+		echo "$0 : Mount output"
+		mount
+		echo "$0 : dmesg | grep sd "
+		dmesg | grep sd
+		echo "$0 : dmesg | grep loop"
+		dmesg | grep loop
+		echo "$0 : dmesg | grep ext"
+		dmesg | grep ext
+		echo "$0 : Exiting box-installer routine"
+		exit 255
+	fi 
+}
+
+
 run_fake_opkg_update() {
 	echo "$0 : Getting main Repository from /etc/opkg.conf"
 	local repo=$(head -n1 /etc/opkg.conf  | cut -d ' ' -f 2)
@@ -113,7 +131,8 @@ run_fake_opkg_update() {
 
 run_signaling_package_start(){
 	#Blinking 3g/USB LED 
-	_signaling_start "$LED_PACKAGE"
+	_signaling_start "$LED_PACKAGE_1"
+	_signaling_start "$LED_PACKAGE_2"
 }
 
 run_install_package(){
@@ -132,7 +151,8 @@ run_install_package(){
 
 run_signaling_package_stop(){
         #Blinking 3g/USB LED 
-        _signaling_stop "$LED_PACKAGE"
+        _signaling_stop "$LED_PACKAGE_1"
+        _signaling_stop "$LED_PACKAGE_2"
 }
 
 
