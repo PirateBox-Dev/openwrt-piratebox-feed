@@ -98,7 +98,7 @@ ext_mount() {
       usb)
 	  ext_ismounted "$ext_usbmount" && continue
 	  [ -d "$ext_usbmount" ] || mkdir -p "$ext_usbmount"
-          if ! mount -o '$ext_usbmount_options' "$ext_usbdevice" "$ext_usbmount"
+          if ! mount -o "$ext_usbmount_options" "$ext_usbdevice" "$ext_usbmount"
           then
             echo "${initscript}: ERROR: unable to mount USB storage" >&2
             exit 5
