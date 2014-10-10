@@ -14,15 +14,18 @@ if  [ -e /mnt/usb/install/auto_package ] ||  !  /etc/init.d/ext enabled  ; then
 
 	/bin/box_installer.sh 2>&1 | logger 
 
+
+	# Always move the first line only
+	head -n 1 $auto_package  >> $auto_package_done
+
 	#Count containing lines, and only shift first to "done"
 	package_lines=`cat $auto_package | wc -l`
 	if [ "$package_lines" -gt "1" ] ; then
 		logger "Multiple line auto_package found. Shifting 1st line to auto_package_done"
-		head -n 1 $auto_package  >> $auto_package_done
 		tail -n +2 $auto_package > /tmp/auto_install_new
 		mv /tmp/auto_install_new $auto_package
 	else
-  		mv $auto_package  $auto_package_done
+		rm $auto_package
 	fi
 
 	## Copy log to USB disc
