@@ -24,23 +24,43 @@ Further Requirments.
 --------------------
 On the USB Stick has to be located:
 
-<USB Stick>/installer		- Contains
-		/auto_package	- One lined file with the packages needed to be installed after bootup
-		/OpenWRT.img.gz - (prepared) ext3-image file
-		/<packageimg>	- Stuff that needed by 'box packge 
-		 /cache		- folder containing all needed .ipk files
-		        /Package.gz_attitude_adjustment  - Package-List from public repository
-		   	/Package.gz_piratebox	- Package-List from PirateBox repository (optional)
+<USB Stick>/install		- Contains
+			/auto_package	- One or more lined file with the packages needed to be installed after bootup
+			/OpenWRT.img.gz - (prepared) ext3-image file
+			/<packageimg>	- Stuff that needed by 'box packge 
+			/cache		- folder containing all needed .ipk files
+			/Package.gz_main		- Package-List from public repository
+			/Package.gz_piratebox	- Package-List from PirateBox repository (optional)
+<USB Stick>/auto_flash	- Images in this folder will be used for flashing during bootup
+					   After a reboot the .bin file is renamed. For flashing sysupgrade is used to
+					   make a firmware compatibility check.
+					   Befor reflashing, the file gets renamed, that it wont run into a loop, because
+					    of incompatibilities.
+<USB Stick>/stop.txt		- if that file is created, the auto installer will not start the auto installation.  This is used
+					   for manual interception during an upgrade or uncommon setups.
+<USB Stick>/install.log	- Ongoing logfile written & appended during installation.
+				
+			
 
 
 What happens
 -------------
-During bootup, the box_installer_start.sh initiates the startup of the USB initialization, if extendRoot is not enabled at boot-time.
-After extendRoot gets init, the script polls until a USB stick gets available.
-On the further progress, it lookups on the install-folder for auto_package and installs that package(s) listed at the first line.
-After everthing is done (valid or not), auto_package is renamed into auto_package_done (to prevent infinitive tries).
 
-On a later start of the script, extendRoot does not get initialized anymore, so that would enable you to install additional packages later (maybe....).
+
+1. Check if the architecture is supported by auto flash tool and a image file is available.
+1.1. If yes, try to identify the model.
+1.2. If image foud, rename the image file with an incremented number (of existing files. That it won't be redetected again.
+1.3.  Create a copy into /tmp and execute sysupgrade on it. (and do a reboot)
+2. If stop.txt exists, stop here. (create a log entry)
+3. If extendRoot filesystem wasn't enabled, 
+3.1. start logging
+3.2. Run box_installer script for extendRoot initialization.
+3.3. Copy over logfile
+4. If auto_package install file is there
+4.1. run automatic package install
+4.2. move installed packages out of auto_package to auto_package_done
+4.3. if that was the last line, remove auto_package file
+4.4. trigger a reboot
 
 
 Signaling on Router
