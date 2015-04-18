@@ -11,6 +11,12 @@ TIMESAVE_SCRIPT="/opt/piratebox/bin/timesave.sh"
 FTP_CONFIG_SCRIPT="/opt/piratebox/bin/ftp_enable.sh"
 FTP_CONFIG_AVAILABLE="-e $FTP_CONFIG_SCRIPT"
 
+MINIDLNA_INITD="/etc/init.d/minidlna"
+MINIDLNA_AVILABLE="-e $MINIDLNA_INITD"
+MINIDLNA_PIRATEBOX_OPENWRT_CONFIG="/opt/piratebox/src/openwrt.example.minidlna"
+MINIDLNA_OPENWRT_CONFIG="/etc/config/minidlna"
+MINIDLNA_STATUS="disabled"
+
 mainmenu() {
 
 
@@ -25,6 +31,17 @@ mainmenu() {
 		else
 			echo "     - FTP configuration not available"
 		fi
+		if [ $MINIDLNA_AVILABLE ] ; then
+			$MINIDLNA_INITD enabled && MINIDLNA_STATUS="enabled"
+			echo -n "   4 - minidlna "
+			if  [ "$MINIDLNA_STATUS" = "enabled" ]   ; then
+				echo " disable"
+			else
+				echo " enable"
+			fi
+		else
+			echo "     - minidlna not available"
+		fi
 		echo ""
 		echo " Everything else causes an exit"
 		echo " "
@@ -34,6 +51,7 @@ mainmenu() {
 			("1")  _set_password_ ;;
 			("2")  _set_date_ ;;
 			("3")  _start_ftp_config_ ;;
+			("4")  _switch_minidlna_ ;;
 			(*) exit 0;;
 		esac
 		option=""
@@ -89,5 +107,24 @@ _start_ftp_config_() {
 
 }
 
+_switch_minidlna_() {
+	if  [ "$MINIDLNA_STATUS" = "enabled" ]	; then
+		$MINIDLNA_INITD	disabled
+		$MINIDLNA_INITD stop
+		echo "minidlna disabled and stopped"
+		return 0
+	else
+		$MINIDLNA_INITD enable
+
+
+		MINIDLNA_PIRATEBOX_OPENWRT_CONFIG="/opt/piratebox/src/openwrt.example.minidlna"
+		MINIDLNA_OPENWRT_CONFIG="/etc/config/minidlna"
+		cp $MINIDLNA_PIRATEBOX_OPENWRT_CONFIG $MINIDLNA_OPENWRT_CONFIG
+		$MINIDLNA_INITD start
+
+		echo "minidlna configuration copied. minidlna started"
+	fi
+
+}
 
 mainmenu

@@ -13,6 +13,9 @@ OPKG_DEST="$OPKG $INSTALL_DESTINATION "
 
 NEXT_STEP="run_test"
 ALL_STEPS="yes"
+DO_PACKAGE="no"
+DO_EXT="no"
+
 
 LED_EXTENDROOT=/sys/class/leds/*wlan
 LED_PACKAGE_1=/sys/class/leds/*3g
@@ -39,7 +42,13 @@ calc_next_step() {
 	 'run_signaling_extendRoot_start') NEXT_STEP="run_prepare_extendRoot" ;;
 	 'run_prepare_extendRoot') NEXT_STEP="run_init_extendRoot" ;;
 	 'run_init_extendRoot') NEXT_STEP="run_signaling_extendRoot_stop" ;;
-	 'run_signaling_extendRoot_stop') NEXT_STEP="run_test_installation_destination" ;;
+
+	 'run_signaling_extendRoot_stop') 
+			if [ "$DO_PACKAGE" = "yes" ] ; then
+				NEXT_STEP="run_test_installation_destination" 
+			else
+				NEXT_STEP="exit"
+			fi 	;;
 	 'run_test_installation_destination') NEXT_STEP='run_fake_opkg_update' ;;
 	 'run_fake_opkg_update') NEXT_STEP="run_signaling_package_start" ;;
 	 'run_signaling_package_start') NEXT_STEP="run_install_package" ;;
@@ -89,8 +98,7 @@ run_init_extendRoot() {
 	fi
 	/etc/init.d/ext init
 	[ $? ] || exit $?
-	echo "$0 : Fixing paths"
-	/bin/ext_path_fixer
+
 }
 
 # Signalize with a steady wifi light, that extendRoot initialization is done
@@ -100,8 +108,8 @@ run_signaling_extendRoot_stop(){
 
 run_test_installation_destination(){
 	echo "$0 : Testing if installation destination by extendRoot is available."
-	/etc/init.d/ext is_ready
-	if [ $? ] ; then
+	/etc/init.d/ext is_ready && OK="yes"
+	if [ "$OK" = "yes"  ] ; then
 		echo "$0 : Installation destination is available."
 	else
 		echo "$0 : Something happend to extendRoot filesystem. Printing debug output..."
@@ -120,6 +128,8 @@ run_test_installation_destination(){
 
 
 run_fake_opkg_update() {
+	echo "$0 : Creating opkg-lists folder, if missing"
+	mkdir -p /var/opkg-lists
 	echo "$0 : Getting main Repository from /etc/opkg.conf"
 	local repo=$(head -n1 /etc/opkg.conf  | cut -d ' ' -f 2)
 	echo "$0 : Doing fake opkg update (copy from cache folder ($repo)"
@@ -143,6 +153,9 @@ run_install_package(){
 		exit 255
 	fi
 
+	echo "$0 : Fixing paths"
+	/bin/ext_path_fixer
+
 	INSTALL_PACKAGE=`head -n 1 $INSTALL_PACKAGE_FILE`
 	echo "$0 : Installing packge $INSTALL_PACKAGE "
 	$OPKG_DEST install $INSTALL_PACKAGE
@@ -158,10 +171,39 @@ run_signaling_package_stop(){
 
 
 # Implement and option to process single steps
-if [ ! -z $1 ] ; then
-	ALL_STEPS="no"
-	[ !-z $2 ] && ALL_STEPS="yes"  #resume
-	NEXT_STEP="$1"
+usage(){
+echo " Auto installer core script.
+
+Use the following parameter to trigger actions
+    -e          : extendRoot init only
+    -p          : install auto package file
+    -n <step>   : resume with step
+    -o          : resume only named step
+
+one of -e or -p is required.
+";
+exit 1
+}
+
+while getopts ":epon:" opt; do
+	case "${opt}" in
+		n) NEXT_STEP="${OPTARG}" ;;
+		p) DO_PACKAGE="yes" ;;
+		e) DO_EXT="yes" ;;
+		o) ALL_STEPS="no";;
+		?) usage ;;
+	esac
+done
+
+if [ "$DO_EXT" = "no" ] && [ "$DO_PACKAGE" = "no" ] ; then
+	usage
+fi
+
+## Default parameter starts with extendRoot 
+##   and ends after it init, when DO_PACKAGE=no
+
+if [ "$DO_EXT" = "no" ] && [ "$DO_PACKAGE" = "yes" ]  ; then 
+	NEXT_STEP="run_test_installation_destination"
 fi
 
 while true; do
