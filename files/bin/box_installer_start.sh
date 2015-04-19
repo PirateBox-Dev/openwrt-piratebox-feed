@@ -53,8 +53,9 @@ if  auto_flash_supported && ls -1  "${new_image_location}"/openwrt-*.bin >> /dev
 		echo "$0: Copy image to /tmp "
 		filename=$(basename ${image_path} )
 		cp "${image_path}.${cnt}"  "/tmp/${filename}"
-		sysupgrade -n  "/tmp/${filename}"  2>&1  
-		reboot && exit 0 	
+		start-stop-daemon -b -S -x sysupgrade --  -n  "/tmp/${filename}"  2>&1
+		echo "Backgrounded sysupgrade, exiting now."
+		exit 0 	
 	else
 		echo "$0 : More than one image found fitting to: "
 		echo "$0 :      modeltype: ${model_type} "
