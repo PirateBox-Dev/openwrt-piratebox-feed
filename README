@@ -42,6 +42,16 @@ On the USB Stick has to be located:
 				
 			
 
+Optional stuff:
+
+<USB Stick>/stop.txt		- If you create that file, the auto_package file won't be processed
+				  during one boot 
+
+<USB Stick>/auto_flash		- If you lay down an .bin file, that file will be flashed automatical
+				  during the next boot, if it fits to the device.
+				  That happens before auto_package is processed.
+				  Flashed images will be renamed and flashed from the 
+				  ram (not directly from USB)
 
 What happens
 -------------
