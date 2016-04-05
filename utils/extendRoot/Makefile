@@ -42,7 +42,7 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi +extendRoot-dbus
 endef
 
 define Package/extendRoot-librarybox
