@@ -108,7 +108,7 @@ ext_mount() {
 	  ext_ismounted "$ext_mountpoint" && continue
 	  ext_mount usb
 	  [ -d "$ext_mountpoint" ] || mkdir -p "$ext_mountpoint"
-          if ! mount -o loop,rw,sync "$ext_img" "$ext_mountpoint"
+          if ! mount -o $ext_imgmount_options "$ext_img" "$ext_mountpoint"
           then
             echo "${initscript}: ERROR: unable to mount ext image" >&2
             exit 5
@@ -250,7 +250,7 @@ ext_mkextimg() {
   ext_uciset fstab piratebox mount \
     target=$ext_mountpoint \
     device=$ext_img \
-    options=loop \
+    options=$ext_imgmount_options \
     enabled=1
 }
 
