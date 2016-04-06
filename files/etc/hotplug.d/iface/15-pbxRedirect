@@ -1,0 +1,35 @@
+#!/bin/sh
+
+updateRedirect() {
+	[ "$DEVICE" != "$1" ] && return 0
+	[ "$ACTION" != 'ifup' ] && return 0
+
+	. /etc/functions.sh
+	local ipaddr destIp rName section name
+	local SECTIONS=''
+
+	config_load network
+	config_get ipaddr $DEVICE ipaddr
+	[ -z "$ipaddr" ] && return 0
+
+	config_cb() {
+		[ "$1" = 'redirect' ] && append SECTIONS "$2"
+	}
+
+	config_load firewall
+	[ -z "$SECTIONS" ] && exit 0
+
+	for section in $SECTIONS; do
+		config_get name $section name
+		{ [ "$name" = 'dns_pbx' ] || [ "$name" = 'http_pbx' ]; } || continue
+		config_get destIp $section dest_ip
+		[ "$destIp" = "$ipaddr" ] && continue
+		config_set $section dest_ip "$ipaddr"
+		uci_set firewall $section dest_ip "$ipaddr"
+		logger -t 'firewall' -p 'daemon.5' "updating option dest_ip of the redirect rule $name to $ipaddr"
+	done
+	uci commit firewall
+}
+
+updateRedirect lan
+

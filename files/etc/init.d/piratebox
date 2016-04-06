@@ -3,14 +3,15 @@
 NAME=piratebox
 START=80
 STOP=20
-EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep timesave"
+EXTRA_COMMANDS="setup init nodns updatePB mountPB init_openwrt stop_keep  timesave avahi "
 EXTRA_HELP="	setup	Activate current USB and network configuration
 	init			initialize installation
 	init_openwrt  rerun startup-openwrt initializarion from piratebox scripts (caution)
 	updatePB  Updates only PirateBox files from USB stick Image-File
 	nodns	Disable local DNS redirection through dnsmasq
-	timesave   Installs timesafe script into rc.local and enables cron
-	stop_keep  stops current running deamons and leaves /opt/piratebox mounted"
+	stop_keep  stops current running deamons and leaves /opt/piratebox mounted
+	avahi	   Does the needed stuff to enable avahi
+	timesave   Installs timesafe script into rc.local and enables cron"
 
 
 # include PirateBox shared functionality
@@ -24,7 +25,7 @@ else
 fi
 
 setup() {
-  pb_netconfig
+  pb_setup
 }
 
 init() {
@@ -63,7 +64,6 @@ stop() {
 }
 
 stop_keep() {
-
 	pb_stop_and_keep
 }
 
@@ -72,3 +72,7 @@ timesave() {
        pb_install_timesave $pb_timesave_script  $pb_piratebox_conf 
  }
 
+avahi() {
+	pb_prepare_avahi 
+
+}

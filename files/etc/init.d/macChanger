@@ -1,0 +1,51 @@
+#!/bin/sh /etc/rc.common
+
+#Mac Address changer script by FriedZombie
+## see  https://forum.openwrt.org/viewtopic.php?pid=213774#p213774
+
+START=17
+
+prefix='28:6A:BA' #prefix used for the mac address, randomizing this part gave strange errors (sometimes)
+iface=0           #interface number according to: uci show wireless
+renew=39600       #timeout to renew the mac address in secconds
+
+pidfile="/var/run/macChanger.pid"
+
+start() {
+  if [ -f "${pidfile}" ]; then
+    pid=`cat "${pidfile}"`
+    if [ ! -z `top -bn1 | awk '{if ($1 == "'"${pid}"'") print $1}'` ]; then
+      logger -t "mac changer" -s -p daemon.error "already running!"
+      return  1
+    fi
+  fi
+  logger -t "mac changer" -s -p daemon.info "started"
+  while [ true ]; do
+    mac="${prefix}"`hexdump -n3 -v -e '/1 ":%02X"' /dev/urandom`
+    network=`uci get wireless.@wifi-iface[${iface}].network`
+    if [ $? -ne 0 ]; then
+      logger -t "mac changer" -s -p daemon.error "iface ${iface} not found, exiting"
+      exit 1
+    fi
+    uci set wireless.@wifi-iface[${iface}].macaddr="${mac}"
+    uci commit wireless
+    logger -t "mac changer" -p daemon.info "new mac: ${mac} set for: ${network}"
+    [ "$action" != "boot" ] && /sbin/wifi restart 2> /dev/null || action=''
+    sleep "${renew}"
+  done&
+  echo $! > "${pidfile}"
+}
+
+stop() {
+  if [ -f "${pidfile}" ]; then
+    pid=`cat "${pidfile}"`
+    rm "${pidfile}"
+    if [ ! -z `top -bn1 | awk '{if ($1 == "'"${pid}"'") print $1}'` ]; then
+      kill ${pid} $(top -bn1 | awk '{if ($2 == "'$pid'") print $1}')
+      logger -t "mac changer" -s -p daemon.info "stopped"
+      return 0
+    fi
+  fi
+  logger -t "mac changer" -s -p daemon.error "not running!"
+  return 1
+}
