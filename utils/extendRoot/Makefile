@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.9.1
+PKG_VERSION:=0.10.1
 PKG_RELEASE:=3
 
 
@@ -42,7 +42,7 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi +extendRoot-dbus
 endef
 
 define Package/extendRoot-librarybox
@@ -54,7 +54,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session  
+   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session +php5-mod-mbstring 
 endef
 
 define Package/extendRoot-php-fastcgi
@@ -229,6 +229,7 @@ define Package/extendRoot-php/postinst
 	sed  's,;extension=xml.so,extension=xml.so,g' -i /etc/php.ini
 	sed  's,;extension=xmlreader.so,extension=xmlreader.so,g' -i /etc/php.ini
 	sed  's,;extension=xmlwriter.so,extension=xmlwriter.so,g' -i /etc/php.ini
+	sed  's,;extension=mbstring.so,extension=mbstring.so,g' -i /etc/php.ini
 endef
 
 define Package/extendRoot-php/prerm

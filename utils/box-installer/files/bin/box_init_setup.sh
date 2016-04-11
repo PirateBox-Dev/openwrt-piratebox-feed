@@ -109,7 +109,7 @@ _start_ftp_config_() {
 
 _switch_minidlna_() {
 	if  [ "$MINIDLNA_STATUS" = "enabled" ]	; then
-		$MINIDLNA_INITD	disabled
+		$MINIDLNA_INITD	disable 
 		$MINIDLNA_INITD stop
 		echo "minidlna disabled and stopped"
 		return 0
