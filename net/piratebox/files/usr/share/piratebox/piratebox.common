@@ -325,16 +325,6 @@ pb_init_image() {
     ln -sf $pb_usbdir $pb_pbmount/share
     #chmod a+rw $CHATFILE  #should not be needed anymore
 
-    if [ -d $pb_usbdir/www_alt ] ; then
-          echo "----------------------------------------------------"
-          echo "####      Alternative www folder found          ####"
-          echo "####          $pb_www_alt                ####"
-          echo "####         switching directories              ####"
-          echo "----------------------------------------------------"
-	  $pb_pbmount/bin/exchange_www.sh $pb_piratebox_conf  "$pb_www_alt"
- 
-    fi
-
     echo "Apply OpenWRT ipv6  config to PirateBox-config.."
     . $pb_pbmount/conf/ipv6.conf
     sed "s|IPV6_IP=\"$IPV6_IP\"|IPV6_IP=\"$pb_ipv6_static$pb_ipv6_mask\"|" -i $pb_pbmount/conf/ipv6.conf
