@@ -19,7 +19,7 @@ define Package/piratebox
 	$(call Package/piratebox/Default)
 	MENU:=1
 	TITLE:=PirateBox-Main package
-  	DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-sqlite3 +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-pdo +php5-mod-json +php5-mod-gd +radvd +ip
+  	DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-pdo-sqlite +php5-mod-sqlite3 +php5-mod-pdo +php5-mod-json +php5-mod-gd +radvd +ip
 endef
 
 define Package/piratebox/description
