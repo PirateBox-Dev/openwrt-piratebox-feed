@@ -84,7 +84,7 @@ endef
 define Package/extendRoot-avahi
 	$(call Package/extendRoot/Default)
 	TITLE:=avahi toolset  on extendRoot
-	DEPENDS:=extendRoot +avahi-daemon +avahi-utils
+	DEPENDS:=extendRoot +avahi-nodbus-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-autoipd  +avahi-utils
 endef
 
 define Package/extendRoot-minidlna
