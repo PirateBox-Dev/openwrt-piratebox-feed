@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.11.1
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -230,7 +230,7 @@ define Package/extendRoot-php/postinst
 	sed  's,;extension=xmlreader.so,extension=xmlreader.so,g' -i /etc/php.ini
 	sed  's,;extension=xmlwriter.so,extension=xmlwriter.so,g' -i /etc/php.ini
 	sed  's,;extension=mbstring.so,extension=mbstring.so,g' -i /etc/php.ini
-	sed  s|;date.timezone =|date.timezone = UTC|' -i /etc/php.ini
+	sed  's|;date.timezone =|date.timezone = UTC|' -i /etc/php.ini
 endef
 
 define Package/extendRoot-php/prerm
