@@ -14,7 +14,7 @@ fi
 
 pb_setup() {
 
-   pb_netconfig 
+  pb_netconfig 
  
    touch $pb_inst_done
 }
@@ -146,14 +146,55 @@ pb_netconfig() {
 
   uci set "network.lan.ipaddr=$pb_ip"
   uci set "network.lan.proto=static"
-  #CAVE: wireless config might be platform specific
-  uci set "wireless.radio0.disabled=0"
-  uci set "wireless.radio0.txpower=25"
 
-  pb_setSSID "$pb_wireless_ssid"
+  # Make sure that the radio's are set in the wirless config
+  wifi detect >> /etc/config/wireless
 
-   uci commit
- 
+  #get all wifi-devices
+  pb_radios=`uci show wireless | grep '=wifi-device' | awk -F'[.=]' '{ print $2 }'`
+
+  #get currently defined ifaces and put them in reverse order
+  pb_ifaces=`uci show wireless | grep '=wifi-iface' | awk -F'[.=]' '{ print $2 }' | sed '1!G;h;$!d'`
+
+  #remove all ifaces except sta's not in the lan zone
+  for pb_iface in $pb_ifaces; do
+    [ "$(uci get wireless.$pb_iface.mode)" = 'sta' ] && [ "$(uci get wireless.$pb_iface.network)" != 'lan' ] && continue
+    uci delete wireless.$pb_iface
+  done
+
+  #loop trough all availlable radios and enable them
+  #set the needed wifi-ifaces again as well.
+  for pb_radio in $pb_radios; do
+    uci set wireless.$pb_radio.disabled=
+    uci add wireless wifi-iface
+    uci set wireless.@wifi-iface[-1].device="$pb_radio"
+    uci set wireless.@wifi-iface[-1].mode='ap'
+    uci set wireless.@wifi-iface[-1].network='lan'
+    uci set wireless.@wifi-iface[-1].ssid="$pb_wireless_ssid"
+    uci set wireless.@wifi-iface[-1].encryption='none'
+    uci set wireless.@wifi-iface[-1].isolate='1'
+  done
+  
+  #Add dns redirection rule
+  uci add firewall redirect
+  uci set firewall.@redirect[-1].name='dns_pbx'
+  uci set firewall.@redirect[-1].src_dport='53'
+  uci set firewall.@redirect[-1].target='DNAT'
+  uci set firewall.@redirect[-1].proto='tcp udp'
+  uci set firewall.@redirect[-1].src='lan'
+  uci set firewall.@redirect[-1].dest_ip="$pb_ip"
+
+  #Add http redirection rule, disabled by default
+  uci add firewall redirect
+  uci set firewall.@redirect[-1].enabled='0'
+  uci set firewall.@redirect[-1].name='http_pbx'
+  uci set firewall.@redirect[-1].src_dport='80'
+  uci set firewall.@redirect[-1].target='DNAT'
+  uci set firewall.@redirect[-1].proto='tcp'
+  uci set firewall.@redirect[-1].src='lan'
+  uci set firewall.@redirect[-1].dest_ip="$pb_ip"
+
+  uci commit
 }
 
 
@@ -164,7 +205,6 @@ generate_v6() {
   test -n "$2" && PREFIX=$2
 
   FIXED=$(hexdump -n8 -e '/2 ":%03x" ' /dev/random )
-
   echo "${initscript}: Generated IPv6 suffix  for $IF : $PREFIX:$FIXED "
   V6_GEN_RESULT="$PREFIX:$FIXED"
 }
@@ -237,8 +277,8 @@ pb_init() {
   echo "${initscript}: Creating piratebox loop image..."
   pb_mkpbimg
 
-  echo "${initscript}: Fixing timezone in php config..."
-  sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
+  #echo "${initscript}: Fixing timezone in php config..."
+  #sed 's|;date.timezone =|date.timezone = UTC|' -i  $ext_linktarget/etc/php.ini
 
   pb_prepare_avahi
  
@@ -284,16 +324,6 @@ pb_init_image() {
     rm -r $pb_pbmount/share
     ln -sf $pb_usbdir $pb_pbmount/share
     #chmod a+rw $CHATFILE  #should not be needed anymore
-
-    if [ -d $pb_usbdir/www_alt ] ; then
-          echo "----------------------------------------------------"
-          echo "####      Alternative www folder found          ####"
-          echo "####          $pb_www_alt                ####"
-          echo "####         switching directories              ####"
-          echo "----------------------------------------------------"
-	  $pb_pbmount/bin/exchange_www.sh $pb_piratebox_conf  "$pb_www_alt"
- 
-    fi
 
     echo "Apply OpenWRT ipv6  config to PirateBox-config.."
     . $pb_pbmount/conf/ipv6.conf
