@@ -172,7 +172,7 @@ endef
 
 define Package/piratebox-mod-imageboard
 	$(call Package/piratebox/Default)
-	DEPENDS:=piratebox +perl +perlbase-base +perlbase-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
+	DEPENDS:=piratebox +perl +perlbase-base +perl-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
 	TITLE:=imageboard modification module
 endef
 
