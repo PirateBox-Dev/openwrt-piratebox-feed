@@ -54,7 +54,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session +php5-mod-mbstring 
+   DEPENDS:=extendRoot php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session +php5-mod-mbstring 
 endef
 
 define Package/extendRoot-php-fastcgi
@@ -78,7 +78,7 @@ endef
 define Package/extendRoot-avahi
 	$(call Package/extendRoot/Default)
 	TITLE:=avahi toolset  on extendRoot
-	DEPENDS:=extendRoot +avahi-nodbus-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-autoipd  +avahi-utils
+	DEPENDS:=extendRoot avahi-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
 endef
 
 define Package/extendRoot-minidlna
