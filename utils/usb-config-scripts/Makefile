@@ -43,22 +43,22 @@ endef
 define Package/usb-config-scripts-librarybox/postinst
 	#!/bin/sh
 	echo "Linking used modules"
-	ln -s ../modules.available/10_openwrt_ssid.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/11_openwrt_txpower.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/12_openwrt_channel.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/13_openwrt_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/60_librarybox_ftp.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/60_librarybox_ftpadmin.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/60_librarybox_ftpanon.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/60_librarybox_ftpsync.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/60_librarybox_ftpsyncport.sh $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/61_librarybox_shoutbox.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/10_openwrt_ssid.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/11_openwrt_txpower.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/12_openwrt_channel.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/13_openwrt_hostname.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/60_librarybox_ftp.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/60_librarybox_ftpadmin.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/60_librarybox_ftpanon.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/60_librarybox_ftpsync.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/60_librarybox_ftpsyncport.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/61_librarybox_shoutbox.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
 	#- default piratebox
-	ln -s ../modules.available/50_piratebox_hostname.sh $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/50_piratebox_hostname.sh $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
         #- PirateBox mesh functionality
-	ln -s ../modules.available/51_openwrt_node_ip.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/51_piratebox_node_ip.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
-	ln -s ../modules.available/52_piratebox_node_name.sh  $$PKG_ROOT/opt/autocfg/modules.enabled
+	ln -s ../modules.available/51_openwrt_node_ip.sh  $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/51_piratebox_node_ip.sh  $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
+	ln -s ../modules.available/52_piratebox_node_name.sh  $${IPKG_INSTROOT}/opt/autocfg/modules.enabled
 endef
 
 define Build/Compile

@@ -26,11 +26,11 @@ endef
 
 define Package/pbxopkg/postinst
   #!/bin/sh
-  if [ -e $$PKG_ROOT/etc/opkg.conf ]; then
-    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $$PKG_ROOT/etc/opkg.conf > /dev/null; then
+  if [ -e $${IPKG_INSTROOT}/etc/opkg.conf ]; then
+    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg.conf > /dev/null; then
       exit 0
     else
-      echo "src/gz piratebox http://stable.openwrt.piratebox.de/all/packages" >> $$PKG_ROOT/etc/opkg.conf
+      echo "src/gz piratebox http://stable.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg.conf
     fi
   fi
 endef
@@ -40,7 +40,7 @@ endef
 
 define Package/pbxopkg/prerm
   #!/bin/sh
-  sed -i '/src\/gz piratebox.*/d' $$PKG_ROOT/etc/opkg.conf
+  sed -i '/src\/gz piratebox.*/d' $${IPKG_INSTROOT}/etc/opkg.conf
 endef
 
 define Package/pbxopkg-beta
@@ -55,11 +55,11 @@ endef
 
 define Package/pbxopkg-beta/postinst
   #!/bin/sh
-  if [ -e $$PKG_ROOT/etc/opkg.conf ]; then
-    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $$PKG_ROOT/etc/opkg.conf > /dev/null; then
+  if [ -e $${IPKG_INSTROOT}/etc/opkg.conf ]; then
+    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg.conf > /dev/null; then
       exit 0
     else
-      echo "src/gz piratebox http://beta.openwrt.piratebox.de/all/packages" >> $$PKG_ROOT/etc/opkg.conf
+      echo "src/gz piratebox http://beta.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg.conf
     fi
   fi
 endef

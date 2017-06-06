@@ -156,7 +156,7 @@ endef
 define Package/extendRoot/postinst
 	#!/bin/sh
 
-	. $$PKG_ROOT/etc/ext.config
+	. $${IPKG_INSTROOT}/etc/ext.config
 	# run initialisation only  if /tmp/ext_auto_install exists
 	if [ -e $$ext_auto_install  ] ; then
 	   echo "Run init because $$ext_auto_install exists "
