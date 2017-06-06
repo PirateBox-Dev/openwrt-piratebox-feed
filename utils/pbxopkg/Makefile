@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pbxopkg
-PKG_VERSION:=0.1.1
+PKG_VERSION:=0.2.1
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -26,11 +26,11 @@ endef
 
 define Package/pbxopkg/postinst
   #!/bin/sh
-  if [ -e $${IPKG_INSTROOT}/etc/opkg.conf ]; then
-    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg.conf > /dev/null; then
+  if [ -e $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf ]; then
+    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf  > /dev/null; then
       exit 0
     else
-      echo "src/gz piratebox http://stable.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg.conf
+      echo "src/gz piratebox http://stable.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf
     fi
   fi
 endef
@@ -40,7 +40,7 @@ endef
 
 define Package/pbxopkg/prerm
   #!/bin/sh
-  sed -i '/src\/gz piratebox.*/d' $${IPKG_INSTROOT}/etc/opkg.conf
+  sed -i '/src\/gz piratebox.*/d' $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf
 endef
 
 define Package/pbxopkg-beta
@@ -55,11 +55,11 @@ endef
 
 define Package/pbxopkg-beta/postinst
   #!/bin/sh
-  if [ -e $${IPKG_INSTROOT}/etc/opkg.conf ]; then
-    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg.conf > /dev/null; then
+  if [ -e $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf ]; then
+    if grep '[ \t]*src/gz[ \t]*piratebox[ \t]*' $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf > /dev/null; then
       exit 0
     else
-      echo "src/gz piratebox http://beta.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg.conf
+      echo "src/gz piratebox http://beta.openwrt.piratebox.de/all/packages" >> $${IPKG_INSTROOT}/etc/opkg/customfeeds.conf
     fi
   fi
 endef
@@ -78,11 +78,17 @@ define Build/Configure
 endef
 
 define Package/pbxopkg/install
-# This is not allowed to be empty otherwise no ipk will be generated.
+	$(INSTALL_DIR) $(1)/etc/
+	$(INSTALL_DIR) $(1)/etc/opkg
+	$(INSTALL_DIR) $(1)/etc/opkg/keys
+	$(INSTALL_BIN) ./files/lede_public.key  $(1)/opkg/keys/437dd44386518241 
 endef
 
 define Package/pbxopkg-beta/install
-# This is not allowed to be empty otherwise no ipk will be generated.
+	$(INSTALL_DIR) $(1)/etc/
+	$(INSTALL_DIR) $(1)/etc/opkg
+	$(INSTALL_DIR) $(1)/etc/opkg/keys
+	$(INSTALL_BIN) ./files/lede_public.key  $(1)/etc/opkg/keys/437dd44386518241 
 endef
 
 $(eval $(call BuildPackage,pbxopkg))
