@@ -54,13 +54,13 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session +php5-mod-mbstring 
+   DEPENDS:=extendRoot php7 +php7-cli +php7-cgi +php7-mod-gd +php7-mod-json +php7-mod-dom +php7-mod-pdo +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-xml +php7-mod-xmlreader +php7-mod-xmlwriter +php7-mod-zip +php7-mod-gettext +php7-mod-openssl +php7-mod-session +php7-mod-mbstring 
 endef
 
 define Package/extendRoot-php-fastcgi
     $(call Package/extendRoot/Default)
     TITLE:=PHP-fastcgi server on extendRoot
-    DEPENDS:=extendRoot  +php5 +php5-fastcgi
+    DEPENDS:=extendRoot  +php7 +php7-fastcgi
 endef
 
 define Package/extendRoot-zoneinfo
@@ -208,7 +208,7 @@ define Package/extendRoot-php/postinst
 	#!/bin/sh
 	. /etc/ext.config
 	ln -s $$ext_linktarget/etc/php.ini /etc
-	ln -s $$ext_linktarget/etc/php5 /etc
+	ln -s $$ext_linktarget/etc/php7 /etc
 	ln -s $$ext_linktarget/usr/bin/php-cgi /usr/bin/
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
@@ -229,7 +229,7 @@ endef
 define Package/extendRoot-php/prerm
 	#!/bin/sh
 	rm /etc/php.ini
-	rm /etc/php5
+	rm /etc/php7
 	rm /usr/bin/php-cgi
 	exit 0
 endef
@@ -237,16 +237,16 @@ endef
 define Package/extendRoot-php-fastcgi/postinst
 	#!/bin/sh
 	. /etc/ext.config
-	ln -s  $$ext_linktarget/etc/config/php5-fastcgi /etc/config/
-	ln -s  $$ext_linktarget/etc/init.d/php5-fastcgi /etc/init.d/
+	ln -s  $$ext_linktarget/etc/config/php7-fastcgi /etc/config/
+	ln -s  $$ext_linktarget/etc/init.d/php7-fastcgi /etc/init.d/
 	ln -s  $$ext_linktarget/usr/local/usr/bin/php-fcgi /usr/bin/
 	exit 0
 endef
 
 define Package/extendRoot-php-fastcgi/prerm
 	#!/bin/sh
-	rm  /etc/config/php5-fastcgi
-	rm  /etc/init.d/php5-fastcgi
+	rm  /etc/config/php7-fastcgi
+	rm  /etc/init.d/php7-fastcgi
 	rm  /usr/bin/php-fcgi 
 	exit 0
 endef
