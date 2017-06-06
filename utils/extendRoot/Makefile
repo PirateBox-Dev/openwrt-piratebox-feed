@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
 PKG_VERSION:=0.10.1
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -42,13 +42,14 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo  
 endef
 
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
+#   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd 
 endef
 
 define Package/extendRoot-php
@@ -75,10 +76,16 @@ define Package/extendRoot-proftpd
 	 DEPENDS:=extendRoot +proftpd
 endef
 
+define Package/extendRoot-dbus
+	$(call Package/extendRoot/Default)
+	TITLE:=dbus config on extendRoot
+	DEPENDS:=extendRoot +dbus
+endef
+
 define Package/extendRoot-avahi
 	$(call Package/extendRoot/Default)
 	TITLE:=avahi toolset  on extendRoot
-	DEPENDS:=extendRoot avahi-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
+	DEPENDS:=extendRoot +avahi-dbus-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
 endef
 
 define Package/extendRoot-minidlna
@@ -303,6 +310,27 @@ define Package/extendRoot-avahi/prerm
 	exit 0
 endef
 
+define Package/extendRoot-dbus/postinst
+	#!/bin/sh
+ 	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/dbus-1 /etc
+	ln -s $$ext_linktarget/usr/sbin/dbus-daemon /usr/sbin
+	ln -s $$ext_linktarget/usr/bin/dbus-uuidgen /usr/bin
+	ln -s $$ext_linktarget/usr/bin/dbus-launch  /usr/bin
+	ln -s $$ext_linktarget/etc/init.d/dbus	    /etc/init.d
+	exit 0
+endef
+
+define Package/extendRoot-dbus/prerm
+	#!/bin/sh
+	rm -r /etc/dbus-1
+	rm /usr/sbin/dbus-daemon
+	rm /usr/bin/dbus-uuidgen
+	rm /usr/bin/dbus-launch
+	rm /etc/init.d/dbus 
+	exit 0
+endef
+
 define Package/extendRoot-minidlna/postinst
 	#!/bin/sh
 	. /etc/ext.config
@@ -347,4 +375,4 @@ $(eval $(call BuildPlugin,extendRoot-librarybox))
 $(eval $(call BuildPlugin,extendRoot-proftpd))
 $(eval $(call BuildPlugin,extendRoot-avahi))
 $(eval $(call BuildPlugin,extendRoot-minidlna))
-
+$(eval $(call BuildPlugin,extendRoot-dbus))
