@@ -1,7 +1,5 @@
 #!/bin/sh
 
-PID=/var/run/auto_syslogd
-
 auto_package=/mnt/usb/install/auto_package
 auto_package_done=/mnt/usb/install/auto_package_done
 logfile=/mnt/usb/install.log
@@ -12,18 +10,15 @@ stopfile=/mnt/usb/stop.txt
 
 start_log(){
 ##Central function for logging;
-##  only start logging if not already online
-	if [ ! -e $PID ]  ; then
-		[ -e $logfile ] && echo "---------------------------------------------" >> $logfile
-		uci set system.@system[0].log_file='/tmp/messages' 
-		uci set system.@system[0].log_type='file' 
-		uci set system.@system[0].log_remote='1' 
-		uci set system.@system[0].log_ip='192.168.1.2'
-		uci set system.@system[0].log_port='9999'
-		uci set system.@system[0].log_proto='udp'
-		/etc/init.d/logd restart
-		uci revert system
-	fi
+	[ -e $logfile ] && echo "---------------------------------------------" >> $logfile
+	uci set system.@system[0].log_file='/tmp/messages' 
+	uci set system.@system[0].log_type='file' 
+	uci set system.@system[0].log_remote='1' 
+	uci set system.@system[0].log_ip='192.168.1.2'
+	uci set system.@system[0].log_port='9999'
+	uci set system.@system[0].log_proto='udp'
+	/etc/init.d/log restart
+	uci revert system
 }
 
 finish_log(){
