@@ -14,7 +14,14 @@ start_log(){
 ##  only start logging if not already online
 	if [ ! -e $PID ]  ; then
 		[ -e $logfile ] && echo "---------------------------------------------" >> $logfile
-		start-stop-daemon -b -S -m -p $PID -x syslogd -- -n -L -R 192.168.1.2:9999 
+		uci set system.@system[0].log_file='/tmp/messages' 
+		uci set system.@system[0].log_type='file' 
+		uci set system.@system[0].log_remote='1' 
+		uci set system.@system[0].log_ip='192.168.1.2'
+		uci set system.@system[0].log_port='9999'
+		uci set system.@system[0].log_proto='udp'
+		/etc/init.d/logd restart
+		uci revert system
 	fi
 }
 
