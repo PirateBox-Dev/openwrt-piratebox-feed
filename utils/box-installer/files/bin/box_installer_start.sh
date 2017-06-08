@@ -24,7 +24,7 @@ start_log(){
 finish_log(){
 	## Copy log to USB disc
 	echo "$0 : Logging install log to USB-Stick"
-	cat /var/log/messages >>  $logfile
+	cat /tmp/messages >>  $logfile
 }
 
 auto_flash_supported(){
