@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pbxopkg
 PKG_VERSION:=0.2.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -81,7 +81,7 @@ define Package/pbxopkg/install
 	$(INSTALL_DIR) $(1)/etc/
 	$(INSTALL_DIR) $(1)/etc/opkg
 	$(INSTALL_DIR) $(1)/etc/opkg/keys
-	$(INSTALL_BIN) ./files/lede_public.key  $(1)/opkg/keys/437dd44386518241 
+	$(INSTALL_BIN) ./files/lede_public.key  $(1)/etc/opkg/keys/437dd44386518241 
 endef
 
 define Package/pbxopkg-beta/install
