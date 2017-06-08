@@ -5,6 +5,7 @@ PID=/var/run/auto_syslogd
 auto_package=/mnt/usb/install/auto_package
 auto_package_done=/mnt/usb/install/auto_package_done
 logfile=/mnt/usb/install.log
+image_prefix="openwrt"
 
 new_image_location=/mnt/usb/auto_flash
 stopfile=/mnt/usb/stop.txt
@@ -48,13 +49,13 @@ auto_flash_supported(){
 
 
 
-if  auto_flash_supported && ls -1  "${new_image_location}"/openwrt-*.bin >> /dev/null 2>&1  ; then
+if  auto_flash_supported && ls -1  "${new_image_location}"/${image_prefix}-*.bin >> /dev/null 2>&1  ; then
 	## Found image(s) at the download location
-	found_images=$( ls  ${new_image_location}/openwrt-*${model_type}*.bin | wc -w )
+	found_images=$( ls  ${new_image_location}/${image_prefix}-*${model_type}*.bin | wc -w )
 
 	if [ "$found_images" -eq 1 ] ; then
-		cnt=$( ls $new_image_location/openwrt-*${model_type}*.bin* | wc -w  )
-		image_path=$( ls -1 ${new_image_location}/openwrt-*${model_type}*.bin )
+		cnt=$( ls $new_image_location/${image_prefix}-*${model_type}*.bin* | wc -w  )
+		image_path=$( ls -1 ${new_image_location}/${image_prefix}-*${model_type}*.bin )
 		echo "$0 : Creating backup of image file - name: ${image_path}.${cnt} "
 		mv  $image_path     "${image_path}.${cnt}" 
 		echo "$0: Copy image to /tmp "
@@ -66,7 +67,7 @@ if  auto_flash_supported && ls -1  "${new_image_location}"/openwrt-*.bin >> /dev
 	else
 		echo "$0 : More than one image found fitting to: "
 		echo "$0 :      modeltype: ${model_type} "
-		ls  ${new_image_location}/openwrt-*${model_type}*.bin 
+		ls  ${new_image_location}/${image_prefix}-*${model_type}*.bin 
 	fi
 else
 	 auto_flash_supported || echo "$0 : unsupported architecture for auto flash- ${DISTRIB_TARGET}"
