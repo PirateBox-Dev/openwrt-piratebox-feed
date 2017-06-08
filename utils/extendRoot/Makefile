@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.12.1
+PKG_VERSION:=0.12.2
 PKG_RELEASE:=4
 
 
@@ -156,9 +156,11 @@ endef
 define Package/extendRoot/postinst
 	#!/bin/sh
 
+	#Avoid auto activation during imagebuild
+	
 	. $${IPKG_INSTROOT}/etc/ext.config
 	# run initialisation only  if /tmp/ext_auto_install exists
-	if [ -e $$ext_auto_install  ] ; then
+	if [ -e "$$ext_auto_install"  ] ; then
 	   echo "Run init because $$ext_auto_install exists "
 	   /etc/init.d/ext init
 	   exit $$?
