@@ -130,13 +130,14 @@ run_test_installation_destination(){
 run_fake_opkg_update() {
 	echo "$0 : Creating opkg-lists folder, if missing"
 	mkdir -p /var/opkg-lists
-	echo "$0 : Getting main Repository from /etc/opkg.conf"
-	local repo=$(head -n1 /etc/opkg.conf  | cut -d ' ' -f 2)
-	echo "$0 : Doing fake opkg update (copy from cache folder ($repo)"
-	cp $CACHE_LOCATION/Package.gz_main /var/opkg-lists/$repo
-	[ $? ] || exit $?
-	echo "$0 : .. doing it for Piratebox repository (optional)"
-	cp $CACHE_LOCATION/Package.gz_piratebox /var/opkg-lists/piratebox
+    cd "$CACHE_LOCATION"
+    ls -1 Package.gz_* > /tmp/repofiles
+    while read repofile ; do
+       repo=$( echo "$repofile" | sed -e 's|Package.gz_||' )
+       echo "$0 : Doing fake opkg update (copy from cache folder ($repo))"
+	   cp "$CACHE_LOCATION/$repofile" "/var/opkg-lists/$repo"
+	   [ $? ] || exit $?
+    done < /tmp/repofiles
 }
 
 run_signaling_package_start(){
