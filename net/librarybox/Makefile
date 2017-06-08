@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=librarybox
-PKG_VERSION:=2.1.0
-PKG_RELEASE:=37
+PKG_VERSION:=2.2.0
+PKG_RELEASE:=1
 
 
 
@@ -187,10 +187,15 @@ define Package/librarybox/install
 	$(INSTALL_DIR) $(1)/usr/share/piratebox
 	$(INSTALL_DIR) $(1)/etc/	
 	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/etc/hotplug.d
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/usr/share/piratebox/piratebox.common  $(1)/usr/share/piratebox/piratebox.common
 	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
+	$(INSTALL_BIN) ./files/etc/init.d/macChanger 	$(1)/etc/init.d/macChanger
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-pbxRedirect $(1)/etc/hotplug.d/iface/15-pbxRedirect
+	
 endef
 
 $(eval $(call BuildPackage,librarybox))

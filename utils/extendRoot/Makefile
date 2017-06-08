@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.10.1
+PKG_VERSION:=0.12.1
 PKG_RELEASE:=4
 
 
@@ -221,7 +221,7 @@ define Package/extendRoot-php/postinst
 	#disable that security feature :/
 	sed  's,doc_root,;doc_root,' -i /etc/php.ini
 	sed  's,;extension=gd.so,extension=gd.so,g' -i /etc/php.ini
-        sed  's,;extension=json.so,extension=json.so,g' -i /etc/php.ini
+	sed  's,;extension=json.so,extension=json.so,g' -i /etc/php.ini
 	sed  's,;extension=dom.so,extension=dom.so,g' -i /etc/php.ini
 	sed  's,;extension=pdo.so,extension=pdo.so,g' -i /etc/php.ini
 	sed  's,;extension=pdo_sqlite.so,extension=pdo_sqlite.so,g' -i /etc/php.ini
@@ -231,6 +231,7 @@ define Package/extendRoot-php/postinst
 	sed  's,;extension=xmlreader.so,extension=xmlreader.so,g' -i /etc/php.ini
 	sed  's,;extension=xmlwriter.so,extension=xmlwriter.so,g' -i /etc/php.ini
 	sed  's,;extension=mbstring.so,extension=mbstring.so,g' -i /etc/php.ini
+	sed  's|;date.timezone =|date.timezone = UTC|' -i /etc/php.ini
 endef
 
 define Package/extendRoot-php/prerm

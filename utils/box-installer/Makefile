@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=box-installer
-PKG_VERSION:=2.1.3
+PKG_VERSION:=3.0.1
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
