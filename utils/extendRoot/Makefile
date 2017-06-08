@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.11.1
+PKG_VERSION:=0.11.2
 PKG_RELEASE:=4
 
 
