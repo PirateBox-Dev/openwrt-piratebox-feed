@@ -96,7 +96,7 @@ run_prepare_extendRoot(){
 }
 
 run_init_extendRoot() {
-	if  /etc/init.d/ext enabled  ; then
+	if  uci get fstab.piratebox.target > /dev/null 2>&1  ; then
 		echo "$0 : not running extendRoot init, because it already is"
 		return 0
 	fi

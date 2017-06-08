@@ -18,6 +18,7 @@ start_log(){
 	uci set system.@system[0].log_port='9999'
 	uci set system.@system[0].log_proto='udp'
 	/etc/init.d/log restart
+	sleep 2
 	uci revert system
 }
 
@@ -77,7 +78,7 @@ if [ -e $stopfile ] ; then
 	exit 0
 fi
 
-if ! uci get fstab.piratebox.target > /dev/null  ; then
+if ! uci get fstab.piratebox.target > /dev/null 2>&1  ; then
 	start_log
 
 	logger "$0 : Doing extendRoot initilization"
