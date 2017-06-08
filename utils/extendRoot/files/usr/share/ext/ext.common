@@ -11,11 +11,8 @@ ext_init() {
   [ -d "$ext_usbdir" ] || mkdir -p "$ext_usbdir"
 
 
-  if ext_needswap
-  then
-    echo "${initscript}: Creating swapspace..."
-    ext_mkswap
-  fi
+  echo "${initscript}: Creating swapspace..."
+  ext_mkswap
 
   if ext_needextimg
   then
