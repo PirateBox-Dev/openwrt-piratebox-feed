@@ -77,7 +77,7 @@ if [ -e $stopfile ] ; then
 	exit 0
 fi
 
-if ! /etc/init.d/ext enabled  ; then
+if ! uci get fstab.piratebox.target > /dev/null  ; then
 	start_log
 
 	logger "$0 : Doing extendRoot initilization"
