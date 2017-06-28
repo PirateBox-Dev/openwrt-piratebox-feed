@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.12.2
+PKG_VERSION:=0.13.2
 PKG_RELEASE:=4
 
 
@@ -155,6 +155,11 @@ endef
 
 define Package/extendRoot/postinst
 	#!/bin/sh
+
+	# Apply fix for default postinst , which does not honor PKG_ROOT
+	sed -e 's|local root="$${IPKG_INSTROOT}"|local root="$${IPKG_INSTROOT}"; test -z "$$root" \&\& test ! -z "$${PKG_ROOT}" \&\& root="$${PKG_ROOT}"|g' \
+	      -i $${IPKG_INSTROOT}/lib/functions.sh
+                                                               
 
 	#Avoid auto activation during imagebuild
 	
