@@ -34,16 +34,16 @@ define Package/librarybox/postinst
 	#!/bin/sh
 	##------ Preparerations for /mnt/ext dependencies
 	if [ ! -e /etc/init.d/piratebox ] ; then
-	   ln -s $${IPKG_INSTROOT}/etc/init.d/piratebox /etc/init.d/
+	   ln -s $$PKG_ROOT/etc/init.d/piratebox /etc/init.d/
 	fi
 
 	if [ ! -e /etc/piratebox.config ] ; then
-	   ln -s $${IPKG_INSTROOT}/etc/piratebox.config /etc
+	   ln -s $$PKG_ROOT/etc/piratebox.config /etc
 	fi
 
 	# include PirateBox shared functionality
-	. $${IPKG_INSTROOT}/usr/share/piratebox/piratebox.common
-	. $${IPKG_INSTROOT}/etc/piratebox.config
+	. $$PKG_ROOT/usr/share/piratebox/piratebox.common
+	. $$PKG_ROOT/etc/piratebox.config
 
 	# disable web interface, start PirateBox instead
 	# Only disable if installed!
@@ -76,12 +76,12 @@ define Package/librarybox/postinst
 
 	##only do network config etc, when first install
 	setup_run=0
-	if [[ ! -e  $${IPKG_INSTROOT}/etc/piratebox.install_done ]]  ; then
+	if [[ ! -e  $$PKG_ROOT/etc/piratebox.install_done ]]  ; then
 	    # configure USB, network
 	     /etc/init.d/piratebox setup
 	     [ $$? -ne 0 ] && exit 99
 	     setup_run=1
-	     touch $${IPKG_INSTROOT}/etc/piratebox.install_done 
+	     touch $$PKG_ROOT/etc/piratebox.install_done 
 	fi
 	# prepare USB partition and install PirateBox
 	/etc/init.d/piratebox init
@@ -118,7 +118,7 @@ define Package/librarybox/preinst
 	   /etc/init.d/piratebox stop
 	fi
 
-        if [ -z $${IPKG_INSTROOT} ] ; then
+        if [ -z $$PKG_ROOT ] ; then
                 echo "Attention, since package piratebox version 1.0, piratebox needs to be installed on installation destination "ext", which is created by the package extendRoot. See http://piratebox.aod-rpg.de for more informations"
                 echo " ... " && sleep 2
                 echo " ... " && sleep 2
@@ -193,9 +193,8 @@ define Package/librarybox/install
 	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
-	$(INSTALL_BIN) ./files/etc/init.d/macChanger 	$(1)/etc/init.d/macChanger
+	$(INSTALL_BIN) ./files/etc/init.d/macChanger    $(1)/etc/init.d/macChanger
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-pbxRedirect $(1)/etc/hotplug.d/iface/15-pbxRedirect
-	
 endef
 
 $(eval $(call BuildPackage,librarybox))
