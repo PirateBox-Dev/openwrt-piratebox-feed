@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.13.2
+PKG_VERSION:=0.14.0
 PKG_RELEASE:=4
 
 
@@ -85,8 +85,15 @@ endef
 define Package/extendRoot-avahi
 	$(call Package/extendRoot/Default)
 	TITLE:=avahi toolset  on extendRoot
-	DEPENDS:=extendRoot +avahi-dbus-daemon +avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
+	DEPENDS:=extendRoot +avahi-dbus-daemon
 endef
+
+define Package/extendRoot-avahi-tools
+	$(call Package/extendRoot/Default)
+	TITLE:=avahi toolset  on extendRoot
+	DEPENDS:=extendRoot +extendRoot-avahi  avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
+endef
+
 
 define Package/extendRoot-minidlna
         $(call Package/extendRoot/Default)
@@ -95,6 +102,11 @@ define Package/extendRoot-minidlna
 endef
 
 define Package/extendRoot-avahi/description
+	not valid as a direct install on root.
+	Links down all needed stuff to get a avahi daemon running within ext-root
+endef
+
+define Package/extendRoot-avahi-tools/description
 	not valid as a direct install on root.
 	Links down all needed stuff to get a avahi daemon running within ext-root
 endef
@@ -382,5 +394,6 @@ $(eval $(call BuildPlugin,extendRoot-zoneinfo))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
 $(eval $(call BuildPlugin,extendRoot-proftpd))
 $(eval $(call BuildPlugin,extendRoot-avahi))
+$(eval $(call BuildPlugin,extendRoot-avahi-tools))
 $(eval $(call BuildPlugin,extendRoot-minidlna))
 $(eval $(call BuildPlugin,extendRoot-dbus))
