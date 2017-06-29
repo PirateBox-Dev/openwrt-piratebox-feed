@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=1
+PKG_RELEASE:=4
 
 include $(INCLUDE_DIR)/package.mk
 
