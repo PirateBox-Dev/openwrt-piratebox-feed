@@ -14,7 +14,7 @@ define Package/librarybox
   TITLE:=LibraryBox-Main package
   SUBMENU:=PirateBox
   URL:=http://www.librarybox.us
-  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-sqlite3 +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-pdo +php5-mod-mbstring +proftpd +radvd  +lftp +ip +php5 
+  DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-sqlite3 +php7-mod-pdo-sqlite +php7-mod-pdo +php7-mod-mbstring +proftpd +radvd  +lftp +ip +php7 
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 endef
@@ -193,9 +193,8 @@ define Package/librarybox/install
 	$(INSTALL_BIN) ./files/usr/share/piratebox/timesave.common  $(1)/usr/share/piratebox/timesave.common
 	$(INSTALL_BIN) ./files/etc/piratebox.config 	$(1)/etc/piratebox.config
 	$(INSTALL_BIN) ./files/etc/init.d/piratebox 	$(1)/etc/init.d/piratebox
-	$(INSTALL_BIN) ./files/etc/init.d/macChanger 	$(1)/etc/init.d/macChanger
+	$(INSTALL_BIN) ./files/etc/init.d/macChanger    $(1)/etc/init.d/macChanger
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-pbxRedirect $(1)/etc/hotplug.d/iface/15-pbxRedirect
-	
 endef
 
 $(eval $(call BuildPackage,librarybox))

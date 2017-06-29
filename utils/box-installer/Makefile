@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=box-installer
-PKG_VERSION:=2.1.3
+PKG_VERSION:=3.0.4
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -23,13 +23,13 @@ endef
 
 define Package/box-installer/postinst/Default
     #!/bin/sh
-    sed 's|^exit|#exit|' -i  $$PKG_ROOT/etc/rc.local
-    echo '/bin/box_installer_start.sh' >> $$PKG_ROOT/etc/rc.local
+    sed 's|^exit|#exit|' -i  $${IPKG_INSTROOT}/etc/rc.local
+    echo '/bin/box_installer_start.sh' >> $${IPKG_INSTROOT}/etc/rc.local
 endef
 
 define Package/box-installer/prerm/Default
    #!/bin/sh
-   sed 's|/bin/box_installer_start.sh||' -i  -i $$PKG_ROOT/etc/rc.local
+   sed 's|/bin/box_installer_start.sh||' -i  -i $${IPKG_INSTROOT}/etc/rc.local
 endef
 
 define Package/box-installer/install/Default
