@@ -342,7 +342,7 @@ pb_start() {
   # that hides the static ip, where you can reach each box locally
   #  from avahi
   echo "Setting static PBx IP $pb_ipv6_static to depricated"
-  ip addr change  $pb_ipv6_static   dev br-lan scope link preferred_lft 0
+  ip addr change  "${pb_ipv6_prefix}::1" dev br-lan scope host
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
 #  mkdir -p $pb_share    
