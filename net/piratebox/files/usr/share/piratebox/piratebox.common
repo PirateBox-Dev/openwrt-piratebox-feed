@@ -136,7 +136,6 @@ pb_netconfig() {
   # Add piratebox.lan
   echo "127.0.0.1 $pb_hostname localhost." >/etc/hosts
   echo "$pb_ip $pb_hostname" >>/etc/hosts
-  echo "$pb_ipv6_static $pb_hostname " >> /etc/hosts
   
   if [  "$pb_hostname" != "$work_hostname" ] ; then
      #Add Random stuff
@@ -218,20 +217,10 @@ pb_netv6config() {
 		pb_ipv6_dynamic=$V6_GEN_RESULT
 	fi
 
-	local ipv6_add="$pb_ipv6_static""$pb_ipv6_mask"
-	uci set "network.lan.ip6addr=$ipv6_add"
+	uci set network.globals.ula_prefix="${pb_ipv6_prefix}::${pb_ipv6_netmask}"
 
-	local ipv6_add="$pb_ipv6_dynamic""$pb_ipv6_mask"
 
-	if   uci show network.@alias[0].ip6addr >> /dev/null  &&  uci show network.@alias[0].interface=lan  >> /dev/null   ;then
-		echo "${initscript}: It seems there is already an alias for br-lan - skipping network-config"
-	else
-		echo "${initscript}: Creating config/network entry for dyn. alias $ipv6_add" 
-		uci add network alias
-		uci set network.@alias[-1].interface=lan
-		uci set network.@alias[-1].ip6addr="$ipv6_add"
-		uci set network.@alias[-1].proto=static 
-	fi 
+	uci set network.lan.ip6addr="${pb_ipv6_dynamic}${pb_ipv6_mask}"
 }
 
 
@@ -327,7 +316,7 @@ pb_init_image() {
 
     echo "Apply OpenWRT ipv6  config to PirateBox-config.."
     . $pb_pbmount/conf/ipv6.conf
-    sed "s|IPV6_IP=\"$IPV6_IP\"|IPV6_IP=\"$pb_ipv6_static$pb_ipv6_mask\"|" -i $pb_pbmount/conf/ipv6.conf
+    sed "s|IPV6_IP=\"$IPV6_IP\"|IPV6_IP=\"$pb_ipv6_dynamic$pb_ipv6_mask\"|" -i $pb_pbmount/conf/ipv6.conf
     sed "s|IPV6_PREFIX=\"$IPV6_PREFIX\"|IPV6_PREFIX=\"$pb_ipv6_prefix\"|" -i  $pb_pbmount/conf/ipv6.conf
     # [ ! -e /usr/sbin/radvd ]  && sed "s|IPV6_ENABLE=\"yes\"|IPV6_ENABLE=\"no\"|" -i $pb_pbmount/conf/ipv6.conf
 
@@ -353,7 +342,7 @@ pb_start() {
   # that hides the static ip, where you can reach each box locally
   #  from avahi
   echo "Setting static PBx IP $pb_ipv6_static to depricated"
-  ip addr change  $pb_ipv6_static   dev br-lan scope link preferred_lft 0
+  ip addr change  "${pb_ipv6_prefix}::1" dev br-lan scope host
 
    [ ! -f $pb_flag_image_init_done ] && pb_init_image 
 #  mkdir -p $pb_share    

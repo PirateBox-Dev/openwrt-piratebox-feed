@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.11.2
+PKG_VERSION:=0.14.0
 PKG_RELEASE:=4
 
 
@@ -19,7 +19,7 @@ endef
 
 define Package/extendRoot
   $(call Package/extendRoot/Default)
-  DEPENDS:= +kmod-usb2 +kmod-usb-storage +kmod-fs-vfat +kmod-nls-cp437 +kmod-nls-cp850 +kmod-nls-iso8859-1 +kmod-nls-iso8859-15 +kmod-fs-ext4 +block-mount +kmod-loop +losetup 
+  DEPENDS:= +kmod-usb2 +kmod-usb-storage +kmod-fs-vfat +kmod-nls-cp437 +kmod-nls-cp850 +kmod-nls-iso8859-1 +kmod-nls-iso8859-15 +kmod-fs-ext4 +ubox +kmod-loop +losetup 
   MENU:=1
 endef
 
@@ -42,25 +42,26 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi +extendRoot-dbus
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo  
 endef
 
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi +extendRoot-dbus
+#   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd 
 endef
 
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot +php5 +php5-cli +php5-cgi +php5-mod-gd +php5-mod-json +php5-mod-http +php5-mod-dom +php5-mod-pdo +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-sqlite3 +php5-mod-xml +php5-mod-xmlreader +php5-mod-xmlwriter +php5-mod-zip +php5-mod-gettext +php5-mod-openssl +php5-mod-session +php5-mod-mbstring 
+   DEPENDS:=extendRoot php7 +php7-cli +php7-cgi +php7-mod-gd +php7-mod-json +php7-mod-dom +php7-mod-pdo +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-xml +php7-mod-xmlreader +php7-mod-xmlwriter +php7-mod-zip +php7-mod-gettext +php7-mod-openssl +php7-mod-session +php7-mod-mbstring 
 endef
 
 define Package/extendRoot-php-fastcgi
     $(call Package/extendRoot/Default)
     TITLE:=PHP-fastcgi server on extendRoot
-    DEPENDS:=extendRoot  +php5 +php5-fastcgi
+    DEPENDS:=extendRoot  +php7 +php7-fastcgi
 endef
 
 define Package/extendRoot-zoneinfo
@@ -84,8 +85,15 @@ endef
 define Package/extendRoot-avahi
 	$(call Package/extendRoot/Default)
 	TITLE:=avahi toolset  on extendRoot
-	DEPENDS:=extendRoot +avahi-daemon +avahi-utils
+	DEPENDS:=extendRoot +avahi-dbus-daemon
 endef
+
+define Package/extendRoot-avahi-tools
+	$(call Package/extendRoot/Default)
+	TITLE:=avahi toolset  on extendRoot
+	DEPENDS:=extendRoot +extendRoot-avahi  avahi-dnsconfd +avahi-daemon-service-ssh +avahi-daemon-service-http +avahi-utils
+endef
+
 
 define Package/extendRoot-minidlna
         $(call Package/extendRoot/Default)
@@ -94,6 +102,11 @@ define Package/extendRoot-minidlna
 endef
 
 define Package/extendRoot-avahi/description
+	not valid as a direct install on root.
+	Links down all needed stuff to get a avahi daemon running within ext-root
+endef
+
+define Package/extendRoot-avahi-tools/description
 	not valid as a direct install on root.
 	Links down all needed stuff to get a avahi daemon running within ext-root
 endef
@@ -155,9 +168,16 @@ endef
 define Package/extendRoot/postinst
 	#!/bin/sh
 
-	. $$PKG_ROOT/etc/ext.config
+	# Apply fix for default postinst , which does not honor PKG_ROOT
+	sed -e 's|local root="$${IPKG_INSTROOT}"|local root="$${IPKG_INSTROOT}"; test -z "$$root" \&\& test ! -z "$${PKG_ROOT}" \&\& root="$${PKG_ROOT}"|g' \
+	      -i $${IPKG_INSTROOT}/lib/functions.sh
+                                                               
+
+	#Avoid auto activation during imagebuild
+	
+	. $${IPKG_INSTROOT}/etc/ext.config
 	# run initialisation only  if /tmp/ext_auto_install exists
-	if [ -e $$ext_auto_install  ] ; then
+	if [ -e "$$ext_auto_install"  ] ; then
 	   echo "Run init because $$ext_auto_install exists "
 	   /etc/init.d/ext init
 	   exit $$?
@@ -214,7 +234,7 @@ define Package/extendRoot-php/postinst
 	#!/bin/sh
 	. /etc/ext.config
 	ln -s $$ext_linktarget/etc/php.ini /etc
-	ln -s $$ext_linktarget/etc/php5 /etc
+	ln -s $$ext_linktarget/etc/php7 /etc
 	ln -s $$ext_linktarget/usr/bin/php-cgi /usr/bin/
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
@@ -236,7 +256,7 @@ endef
 define Package/extendRoot-php/prerm
 	#!/bin/sh
 	rm /etc/php.ini
-	rm /etc/php5
+	rm /etc/php7
 	rm /usr/bin/php-cgi
 	exit 0
 endef
@@ -244,16 +264,16 @@ endef
 define Package/extendRoot-php-fastcgi/postinst
 	#!/bin/sh
 	. /etc/ext.config
-	ln -s  $$ext_linktarget/etc/config/php5-fastcgi /etc/config/
-	ln -s  $$ext_linktarget/etc/init.d/php5-fastcgi /etc/init.d/
+	ln -s  $$ext_linktarget/etc/config/php7-fastcgi /etc/config/
+	ln -s  $$ext_linktarget/etc/init.d/php7-fastcgi /etc/init.d/
 	ln -s  $$ext_linktarget/usr/local/usr/bin/php-fcgi /usr/bin/
 	exit 0
 endef
 
 define Package/extendRoot-php-fastcgi/prerm
 	#!/bin/sh
-	rm  /etc/config/php5-fastcgi
-	rm  /etc/init.d/php5-fastcgi
+	rm  /etc/config/php7-fastcgi
+	rm  /etc/init.d/php7-fastcgi
 	rm  /usr/bin/php-fcgi 
 	exit 0
 endef
@@ -295,6 +315,21 @@ define Package/extendRoot-proftpd/prerm
 	exit 0
 endef
 
+define Package/extendRoot-avahi/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/avahi 	/etc
+	ln -s $$ext_linktarget/etc/init.d/avahi-daemon /etc/init.d
+	exit 0
+endef
+
+define Package/extendRoot-avahi/prerm
+	#!/bin/sh
+	rm /etc/init.d/avahi-daemon
+	rm /etc/avahi
+	exit 0
+endef
+
 define Package/extendRoot-dbus/postinst
 	#!/bin/sh
  	. /etc/ext.config
@@ -313,21 +348,6 @@ define Package/extendRoot-dbus/prerm
 	rm /usr/bin/dbus-uuidgen
 	rm /usr/bin/dbus-launch
 	rm /etc/init.d/dbus 
-	exit 0
-endef
-
-define Package/extendRoot-avahi/postinst
-	#!/bin/sh
-	. /etc/ext.config
-	ln -s $$ext_linktarget/etc/avahi 	/etc
-	ln -s $$ext_linktarget/etc/init.d/avahi-daemon /etc/init.d
-	exit 0
-endef
-
-define Package/extendRoot-avahi/prerm
-	#!/bin/sh
-	rm /etc/init.d/avahi-daemon
-	rm /etc/avahi
 	exit 0
 endef
 
@@ -373,7 +393,7 @@ $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-zoneinfo))
 $(eval $(call BuildPlugin,extendRoot-librarybox))
 $(eval $(call BuildPlugin,extendRoot-proftpd))
-$(eval $(call BuildPlugin,extendRoot-dbus))
 $(eval $(call BuildPlugin,extendRoot-avahi))
+$(eval $(call BuildPlugin,extendRoot-avahi-tools))
 $(eval $(call BuildPlugin,extendRoot-minidlna))
-
+$(eval $(call BuildPlugin,extendRoot-dbus))

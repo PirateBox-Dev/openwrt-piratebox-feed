@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
-PKG_VERSION:=1.1.1
-PKG_RELEASE:=4
+PKG_VERSION:=1.2.0
+PKG_RELEASE:=6
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -19,7 +19,7 @@ define Package/piratebox
 	$(call Package/piratebox/Default)
 	MENU:=1
 	TITLE:=PirateBox-Main package
-  	DEPENDS:= +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php5-cgi +zoneinfo-core +zoneinfo-simple +php5-mod-json  +php5-mod-sqlite3 +php5-mod-pdo-sqlite +php5-mod-sqlite +php5-mod-pdo +php5-mod-json +php5-mod-gd +radvd +ip
+  	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip
 endef
 
 define Package/piratebox/description
@@ -172,7 +172,7 @@ endef
 
 define Package/piratebox-mod-imageboard
 	$(call Package/piratebox/Default)
-	DEPENDS:=piratebox +perl +perlbase-base +perlbase-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
+	DEPENDS:=piratebox +perl +perlbase-base +perl-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
 	TITLE:=imageboard modification module
 endef
 

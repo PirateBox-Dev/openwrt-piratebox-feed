@@ -8,8 +8,11 @@ INSTALL_PACKAGE_FILE=/mnt/usb/install/auto_package
 CACHE_LOCATION="/mnt/usb/install/cache"
 INSTALL_DESTINATION="-d ext"
 
+
 OPKG="opkg --cache $CACHE_LOCATION "
-OPKG_DEST="$OPKG $INSTALL_DESTINATION "
+OPKG_CONFIG_NOSIG="/tmp/opkg_nosig.conf"
+OPKG_CONFIG="-f $OPKG_CONFIG_NOSIG"
+OPKG_DEST="$OPKG $OPKG_CONFIG $INSTALL_DESTINATION "
 
 NEXT_STEP="run_test"
 ALL_STEPS="yes"
@@ -50,7 +53,8 @@ calc_next_step() {
 				NEXT_STEP="exit"
 			fi 	;;
 	 'run_test_installation_destination') NEXT_STEP='run_fake_opkg_update' ;;
-	 'run_fake_opkg_update') NEXT_STEP="run_signaling_package_start" ;;
+	 'run_fake_opkg_update') NEXT_STEP="run_opkg_disable_sig_config" ;;
+	 'run_opkg_disable_sig_config') NEXT_STEP="run_signaling_package_start" ;;
 	 'run_signaling_package_start') NEXT_STEP="run_install_package" ;;
 	 'run_install_package') NEXT_STEP="run_signaling_package_stop" ;;
 	 'run_signaling_package_stop') NEXT_STEP="exit" ;;
@@ -92,7 +96,7 @@ run_prepare_extendRoot(){
 }
 
 run_init_extendRoot() {
-	if  /etc/init.d/ext enabled  ; then
+	if  uci get fstab.piratebox.target > /dev/null 2>&1  ; then
 		echo "$0 : not running extendRoot init, because it already is"
 		return 0
 	fi
@@ -130,13 +134,19 @@ run_test_installation_destination(){
 run_fake_opkg_update() {
 	echo "$0 : Creating opkg-lists folder, if missing"
 	mkdir -p /var/opkg-lists
-	echo "$0 : Getting main Repository from /etc/opkg.conf"
-	local repo=$(head -n1 /etc/opkg.conf  | cut -d ' ' -f 2)
-	echo "$0 : Doing fake opkg update (copy from cache folder ($repo)"
-	cp $CACHE_LOCATION/Package.gz_main /var/opkg-lists/$repo
-	[ $? ] || exit $?
-	echo "$0 : .. doing it for Piratebox repository (optional)"
-	cp $CACHE_LOCATION/Package.gz_piratebox /var/opkg-lists/piratebox
+    cd "$CACHE_LOCATION"
+    ls -1 Package.gz_* > /tmp/repofiles
+    while read repofile ; do
+       repo=$( echo "$repofile" | sed -e 's|Package.gz_||' )
+       echo "$0 : Doing fake opkg update (copy from cache folder ($repo))"
+	   cp "$CACHE_LOCATION/$repofile" "/var/opkg-lists/$repo"
+	   [ $? ] || exit $?
+    done < /tmp/repofiles
+}
+
+run_opkg_disable_sig_config(){
+    echo "$0: Create custom opkg.conf ${OPKG_CONFIG_NOSIG} with signature check"
+    sed -e 's|option check_signature 1||'  /etc/opkg.conf > "${OPKG_CONFIG_NOSIG}"
 }
 
 run_signaling_package_start(){
