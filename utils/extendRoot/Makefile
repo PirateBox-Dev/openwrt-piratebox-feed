@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.14.0
+PKG_VERSION:=0.14.1
 PKG_RELEASE:=4
 
 
@@ -236,6 +236,8 @@ define Package/extendRoot-php/postinst
 	ln -s $$ext_linktarget/etc/php.ini /etc
 	ln -s $$ext_linktarget/etc/php7 /etc
 	ln -s $$ext_linktarget/usr/bin/php-cgi /usr/bin/
+	ln -s $$ext_linktarget/usr/bin/php-cli /usr/bin/
+	ln -s $$ext_linktarget/usr/bin/php-cli /usr/bin/php
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
 	sed  's,doc_root,;doc_root,' -i /etc/php.ini
