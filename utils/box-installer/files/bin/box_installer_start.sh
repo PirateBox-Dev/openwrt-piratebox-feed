@@ -3,7 +3,7 @@
 auto_package=/mnt/usb/install/auto_package
 auto_package_done=/mnt/usb/install/auto_package_done
 logfile=/mnt/usb/install.log
-image_prefix="openwrt"
+image_prefix="{openwrt,lede}"
 
 new_image_location=/mnt/usb/auto_flash
 stopfile=/mnt/usb/stop.txt
