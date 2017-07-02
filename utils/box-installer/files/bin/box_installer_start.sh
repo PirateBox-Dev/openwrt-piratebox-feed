@@ -29,18 +29,16 @@ finish_log(){
 }
 
 auto_flash_supported(){
-	## Load OpenWRT release file
-	. /etc/openwrt_release
-	SUPPORTED_AUTOFLASH="ar71xx/generic"
+    # that file is generated during boot up and contains the board name
+    test ! -e /tmp/sysinfo/board_name && return 1
 
-	case "$DISTRIB_TARGET" in 
-		"ar71xx/generic"*) \
-			. /lib/ar71xx.sh
-			model_type=$( ar71xx_board_name )
-			echo "$: Model Type ${model_type} identified" | logger 
-			return 0
-			;;
-	esac || return 1  
+    if  model_type=$( cat /tmp/sysinfo/board_name ) ; then
+    	echo "$: Model Type ${model_type} identified" | logger
+	    return 0
+    else
+        echo "$: Error getting board name from  /tmp/sysinfo/board_name" | logger
+        return 1
+    fi
 }
 
 
