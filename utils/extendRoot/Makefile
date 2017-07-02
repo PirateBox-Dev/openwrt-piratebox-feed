@@ -55,7 +55,7 @@ endef
 define Package/extendRoot-php
    $(call Package/extendRoot/Default)
    TITLE:=PHP on extendRoot
-   DEPENDS:=extendRoot php7 +php7-cli +php7-cgi +php7-mod-gd +php7-mod-json +php7-mod-dom +php7-mod-pdo +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-xml +php7-mod-xmlreader +php7-mod-xmlwriter +php7-mod-zip +php7-mod-gettext +php7-mod-openssl +php7-mod-session +php7-mod-mbstring 
+   DEPENDS:=extendRoot php7 +php7-cli +php7-cgi +php7-mod-gd +php7-mod-json +php7-mod-dom +php7-mod-pdo +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-xml +php7-mod-xmlreader +php7-mod-xmlwriter +php7-mod-zip +php7-mod-gettext +php7-mod-openssl +php7-mod-session +php7-mod-mbstring +php7-mod-opcache
 endef
 
 define Package/extendRoot-php-fastcgi
