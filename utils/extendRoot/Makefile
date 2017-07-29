@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.14.1
+PKG_VERSION:=0.15.1
 PKG_RELEASE:=4
 
 
@@ -101,6 +101,12 @@ define Package/extendRoot-minidlna
         DEPENDS:=extendRoot +minidlna
 endef
 
+define Package/extendRoot-openssh-sftp-server
+        $(call Package/extendRoot/Default)
+        TITLE:=openssh-sftp-server  on extendRoot
+        DEPENDS:=extendRoot +openssh-sftp-server
+endef
+
 define Package/extendRoot-avahi/description
 	not valid as a direct install on root.
 	Links down all needed stuff to get a avahi daemon running within ext-root
@@ -163,6 +169,11 @@ endef
 define Package/extendRoot-minidlna/description
 	not valid as direct isntall on root
 	Installs minidlna to extend root and links needed folder
+endef
+
+define Package/extendRoot-openssh-sftp-server/description
+	not valid as direct isntall on root
+	Installs sftp-server to extend root and links needed folder
 endef
 
 define Package/extendRoot/postinst
@@ -370,6 +381,21 @@ define Package/extendRoot-minidlna/prerm
 	exit 0
 endef
 
+define Package/extendRoot-openssh-sftp-server/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/usr/lib/sftp-server	/usr/lib
+	ln -s $$ext_linktarget/usr/libexec/sftp-server  /usr/libexec
+	exit 0
+endef
+
+define /Package/extendRoot-openssh-sftp-server/prerm
+	#!/bin/sh
+	rm /usr/lib/sftp-server
+	rm /usr/libexec/sftp-server
+	exit 0
+endef
+
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -399,3 +425,4 @@ $(eval $(call BuildPlugin,extendRoot-avahi))
 $(eval $(call BuildPlugin,extendRoot-avahi-tools))
 $(eval $(call BuildPlugin,extendRoot-minidlna))
 $(eval $(call BuildPlugin,extendRoot-dbus))
+$(eval $(call BuildPlugin,extendRoot-openssh-sftp-server))
