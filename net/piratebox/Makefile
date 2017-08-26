@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -196,7 +196,7 @@ define Package/piratebox-mod-imageboard/postinst
 	if [ -e $$ext_usbmount/install/$$KAREHA_RELEASE ]; then
 		cp $$ext_usbmount/install/$$KAREHA_RELEASE  $$pb_pbmount/tmp
 	fi
-	$$pb_pbmount/bin/install_piratebox.sh "$$pb_piratebox_conf" imageboard
+	$$pb_pbmount/bin/install_piratebox.sh imageboard
 	exit 0
 endef
 
