@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.10.1
+PKG_VERSION:=0.10.2
 PKG_RELEASE:=3
 
 
@@ -42,7 +42,7 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi +extendRoot-dbus
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo +extendRoot-avahi +extendRoot-dbus +extendRoot-radvd
 endef
 
 define Package/extendRoot-librarybox
@@ -91,6 +91,12 @@ define Package/extendRoot-minidlna
         $(call Package/extendRoot/Default)
         TITLE:=minidlna  on extendRoot
         DEPENDS:=extendRoot +minidlna
+endef
+
+define Package/extendRoot-radvd
+        $(call Package/extendRoot/Default)
+        TITLE:=radvd  on extendRoot
+        DEPENDS:=extendRoot +radvd
 endef
 
 define Package/extendRoot-avahi/description
@@ -150,6 +156,11 @@ endef
 define Package/extendRoot-minidlna/description
 	not valid as direct isntall on root
 	Installs minidlna to extend root and links needed folder
+endef
+
+define Package/extendRoot-radvd/description
+	not valid as direct isntall on root
+	Installs radvd to extend root and links needed folder
 endef
 
 define Package/extendRoot/postinst
@@ -347,6 +358,26 @@ define Package/extendRoot-minidlna/prerm
 	exit 0
 endef
 
+define Package/extendRoot-radvd/postinst
+	#!/bin/sh
+	. /etc/ext.config
+	ln -s $$ext_linktarget/etc/config/radvd	/etc/config
+	ln -s $$ext_linktarget/etc/init.d/radvd  /etc/init.d
+	ln -s $$ext_linktarget/usr/sbin/radvd  /usr/sbin
+	ln -s $$ext_linktarget/usr/sbin/radvd  /usr/bin
+	exit 0
+endef
+
+define Package/extendRoot-radvd/prerm
+	#!/bin/sh
+	rm /etc/config/radvd
+	rm /etc/init.d/radvd
+	rm /usr/bin/radvd
+	rm /usr/sbin/radvd
+	exit 0
+endef
+
+define Package/extendRoot/install
 define Package/extendRoot/install
 	$(INSTALL_DIR) $(1)/usr/share/ext
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -375,4 +406,5 @@ $(eval $(call BuildPlugin,extendRoot-proftpd))
 $(eval $(call BuildPlugin,extendRoot-dbus))
 $(eval $(call BuildPlugin,extendRoot-avahi))
 $(eval $(call BuildPlugin,extendRoot-minidlna))
+$(eval $(call BuildPlugin,extendRoot-radvd))
 
