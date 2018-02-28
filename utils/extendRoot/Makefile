@@ -249,6 +249,7 @@ define Package/extendRoot-php/postinst
 	ln -s $$ext_linktarget/usr/bin/php-cgi /usr/bin/
 	ln -s $$ext_linktarget/usr/bin/php-cli /usr/bin/
 	ln -s $$ext_linktarget/usr/bin/php-cli /usr/bin/php
+	ln -s $$ext_linktarget/usr/lib/php /usr/lib/
 	sed  's,extension_dir = \"/usr/lib/php\",extension_dir = \"/usr/local/usr/lib/php\",g' -i /etc/php.ini
 	#disable that security feature :/
 	sed  's,doc_root,;doc_root,' -i /etc/php.ini
@@ -271,6 +272,7 @@ define Package/extendRoot-php/prerm
 	rm /etc/php.ini
 	rm /etc/php7
 	rm /usr/bin/php-cgi
+	rm /usr/lib/php 
 	exit 0
 endef
 
@@ -287,7 +289,7 @@ define Package/extendRoot-php-fastcgi/prerm
 	#!/bin/sh
 	rm  /etc/config/php7-fastcgi
 	rm  /etc/init.d/php7-fastcgi
-	rm  /usr/bin/php-fcgi 
+	rm  /usr/bin/php-fcgi
 	exit 0
 endef
 
