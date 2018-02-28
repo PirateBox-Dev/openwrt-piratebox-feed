@@ -19,7 +19,7 @@ endef
 
 define Package/extendRoot
   $(call Package/extendRoot/Default)
-  DEPENDS:= +kmod-usb2 +kmod-usb-storage +kmod-fs-vfat +kmod-nls-cp437 +kmod-nls-cp850 +kmod-nls-iso8859-1 +kmod-nls-iso8859-15 +kmod-fs-ext4 +ubox +kmod-loop +losetup 
+  DEPENDS:= +kmod-usb2 +kmod-usb-storage +kmod-fs-vfat +kmod-nls-cp437 +kmod-nls-cp850 +kmod-nls-iso8859-1 +kmod-nls-iso8859-15 +kmod-fs-ext4 +ubox +kmod-loop +losetup
   MENU:=1
 endef
 
@@ -42,14 +42,14 @@ endef
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo  
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo
 endef
 
 define Package/extendRoot-librarybox
    $(call Package/extendRoot/Default)
    TITLE:=LibraryBox on extendRoot
-#   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi 
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd 
+#   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd +extendRoot-avahi
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +librarybox +extendRoot-php +extendRoot-zoneinfo +extendRoot-proftpd
 endef
 
 define Package/extendRoot-php
@@ -67,7 +67,7 @@ endef
 define Package/extendRoot-zoneinfo
     $(call Package/extendRoot/Default)
     TITLE:=zoneinfo-core for PHP applications on extendRoot
-    DEPENDS:=extendRoot +zoneinfo-core 
+    DEPENDS:=extendRoot +zoneinfo-core
 endef
 
 define Package/extendRoot-proftpd
@@ -118,13 +118,13 @@ define Package/extendRoot-avahi-tools/description
 endef
 
 define Package/extendRoot-dbus/description
-   not valid as a direct install on root. 
+   not valid as a direct install on root.
    opkg -d ext install extendRoot-bus
    Links dbus files into root
 endef
 
 define Package/extendRoot-piratebox/description
-   not valid as a direct install on root. 
+   not valid as a direct install on root.
    run opkg -d ext install extendRoot-piratebox
    that creates a fully linked installation of all needed packages from extended root mount pointing into the normal firmware
 endef
@@ -153,7 +153,7 @@ endef
 
 define Package/extendRoot-php-fastcgi/description
  	not valid as a direct install on root
-	Installs fastcgi-php 
+	Installs fastcgi-php
 endef
 
 define Package/extendRoot-zoneinfo/description
@@ -182,10 +182,10 @@ define Package/extendRoot/postinst
 	# Apply fix for default postinst , which does not honor PKG_ROOT
 	sed -e 's|local root="$${IPKG_INSTROOT}"|local root="$${IPKG_INSTROOT}"; test -z "$$root" \&\& test ! -z "$${PKG_ROOT}" \&\& root="$${PKG_ROOT}"|g' \
 	      -i $${IPKG_INSTROOT}/lib/functions.sh
-                                                               
+
 
 	#Avoid auto activation during imagebuild
-	
+
 	. $${IPKG_INSTROOT}/etc/ext.config
 	# run initialisation only  if /tmp/ext_auto_install exists
 	if [ -e "$$ext_auto_install"  ] ; then
@@ -220,7 +220,7 @@ endef
 
 define Package/extendRoot-python/prerm
 	rm /usr/bin/python
-	rm /usr/bin/python* 
+	rm /usr/bin/python*
 endef
 
 
@@ -272,7 +272,7 @@ define Package/extendRoot-php/prerm
 	rm /etc/php.ini
 	rm /etc/php7
 	rm /usr/bin/php-cgi
-	rm /usr/lib/php 
+	rm /usr/lib/php
 	exit 0
 endef
 
@@ -301,7 +301,7 @@ define Package/extendRoot-zoneinfo/postinst
 	mkdir -p /usr/share
 	ln -s $$ext_linktarget/usr/share/zoneinfo /usr/share
 	exit 0
-endef	
+endef
 
 define Package/extendRoot-zoneinfo/prerm
 	#!/bin/sh
@@ -323,10 +323,10 @@ endef
 define Package/extendRoot-proftpd/prerm
 	#!/bin/sh
         rm /etc/proftpd.conf
-	rm /etc/init.d/proftpd 
-	rm /usr/sbin/proftpd 
+	rm /etc/init.d/proftpd
+	rm /usr/sbin/proftpd
 	rm /usr/sbin/ftpshut
-	rm /usr/sbin/in.proftpd 
+	rm /usr/sbin/in.proftpd
 	exit 0
 endef
 
@@ -362,7 +362,7 @@ define Package/extendRoot-dbus/prerm
 	rm /usr/sbin/dbus-daemon
 	rm /usr/bin/dbus-uuidgen
 	rm /usr/bin/dbus-launch
-	rm /etc/init.d/dbus 
+	rm /etc/init.d/dbus
 	exit 0
 endef
 
