@@ -214,6 +214,7 @@ define Package/extendRoot-python/postinst
 	#start the init from piratebox scripts
 	. /etc/ext.config
 	ln -s $$ext_linktarget/usr/bin/python /usr/bin/
+	ln -s $$ext_linktarget/usr/bin/python /usr/bin/python2
 	ln -s $$ext_linktarget/usr/lib/python* /usr/lib/
 	exit 0
 endef
