@@ -135,7 +135,7 @@ run_fake_opkg_update() {
 	echo "$0 : Creating opkg-lists folder, if missing"
 	mkdir -p /var/opkg-lists
     cd "$CACHE_LOCATION"
-    ls -1 Package.gz_* > /tmp/repofiles
+    ls -1 Packages.gz_* > /tmp/repofiles
     while read repofile ; do
        repo=$( echo "$repofile" | sed -e 's|Packages.gz_||' )
        echo "$0 : Doing fake opkg update (copy from cache folder ($repo))"
