@@ -23,6 +23,7 @@ DO_EXT="no"
 LED_EXTENDROOT=/sys/class/leds/*wlan
 LED_PACKAGE_1=/sys/class/leds/*3g
 LED_PACKAGE_2=/sys/class/leds/*usb
+LED_PACKAGE_3=/sys/class/leds/*wan
 
 
 
@@ -155,6 +156,7 @@ run_signaling_package_start(){
 	#Blinking 3g/USB LED 
 	_signaling_start "$LED_PACKAGE_1"
 	_signaling_start "$LED_PACKAGE_2"
+	_signaling_start "$LED_PACKAGE_3"
 }
 
 run_install_package(){
@@ -178,6 +180,7 @@ run_signaling_package_stop(){
         #Blinking 3g/USB LED 
         _signaling_stop "$LED_PACKAGE_1"
         _signaling_stop "$LED_PACKAGE_2"
+        _signaling_stop "$LED_PACKAGE_3"
 }
 
 
