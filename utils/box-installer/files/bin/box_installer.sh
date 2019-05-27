@@ -137,9 +137,10 @@ run_fake_opkg_update() {
     cd "$CACHE_LOCATION"
     ls -1 Package.gz_* > /tmp/repofiles
     while read repofile ; do
-       repo=$( echo "$repofile" | sed -e 's|Package.gz_||' )
+       repo=$( echo "$repofile" | sed -e 's|Packages.gz_||' )
        echo "$0 : Doing fake opkg update (copy from cache folder ($repo))"
-	   cp "$CACHE_LOCATION/$repofile" "/var/opkg-lists/$repo"
+	   cp "$CACHE_LOCATION/$repofile" "/var/opkg-lists/$repo" && \
+           cp "$CACHE_LOCATION/Packages.sig_$repo" "/var/opkg-lists/${repo}.sig"
 	   [ $? ] || exit $?
     done < /tmp/repofiles
 }
@@ -147,6 +148,7 @@ run_fake_opkg_update() {
 run_opkg_disable_sig_config(){
     echo "$0: Create custom opkg.conf ${OPKG_CONFIG_NOSIG} with signature check"
     sed -e 's|option check_signature 1||'  /etc/opkg.conf > "${OPKG_CONFIG_NOSIG}"
+    sed -i 's|option check_signature||'  "${OPKG_CONFIG_NOSIG}"
 }
 
 run_signaling_package_start(){
