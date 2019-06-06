@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=7
+PKG_RELEASE:=9
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -22,8 +22,20 @@ define Package/piratebox
   	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip
 endef
 
+define Package/thewrong
+	$(call Package/piratebox/Default)
+	MENU:=1
+	TITLE:=The.Wrong customzied PirateBox package
+  	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip +lighttpd-mod-accesslog +lighttpd-mod-status
+	URL:=https://github.com/miyovanstenis/the.wrong
+endef
+
 define Package/piratebox/description
 	Turns your OpenWRT Router into a PirateBox; see http://piratebox.cc
+endef
+
+define Package/thewrong/description
+	Turns your OpenWRT Router into a PirateBox based Artbox
 endef
 
 define Package/piratebox/postinst
@@ -100,6 +112,10 @@ define Package/piratebox/postinst
 	echo "Done"
 endef
 
+define Package/thewrong/postinst
+	$(call Package/piratebox/postinst)
+endef 
+
 define Package/piratebox/preinst
 	#!/bin/sh
 	#Disable Piratebox, it it seems that it is installed
@@ -114,6 +130,10 @@ define Package/piratebox/preinst
 	fi
 	exit 0
 endef
+
+define Package/thewrong/preinst
+	$(call Package/piratebox/preinst)
+endef 
 
 define Package/piratebox/prerm
 	#!/bin/sh
@@ -146,6 +166,10 @@ define Package/piratebox/prerm
 	echo "Please reboot for changes to take effect."
 endef
 
+define Package/thewrong/prerm
+	$(call Package/piratebox/prerm)
+endef 
+
 define  Package/piratebox/postrm
 	#!/bin/sh
 	# remove links, if exists
@@ -154,6 +178,11 @@ define  Package/piratebox/postrm
 
 	exit 0
 endef
+
+define Package/thewrong/postrm
+	$(call Package/piratebox/postrm)
+endef 
+
 
 define Package/piratebox/install
 	$(INSTALL_DIR) $(1)/usr/share/piratebox
@@ -170,13 +199,33 @@ define Package/piratebox/install
 	( [ "$(CONFIG_PIRATEBOX_BETA)"  == "y" ] &&  sed 's|piratebox.aod-rpg.de|beta.openwrt.piratebox.de|' -i $(1)/etc/piratebox.config ) || echo "skipped"
 endef
 
+define Package/thewrong/install
+	$(call Package/piratebox/install,$1)
+	sed -i -e 's|pb_usbdir="$$ext_usbmount/PirateBox"|pb_usbdir="$$ext_usbmount/the.wrong"|'  $(1)/etc/piratebox.config
+	sed -i -e 's|pb_wireless_ssid="PirateBox - Share Freely"|pb_wireless_ssid="The.Wrong"|' $(1)/etc/piratebox.config
+	sed -i -e 's|pb_wireless_ssid="PirateBox - Share Freely"|pb_wireless_ssid="The.Wrong"|' $(1)/etc/piratebox.config
+	sed -i -e 's|pb_inst_flag_mesh="/etc/init.d/mesh"|pb_inst_flag_mesh="/foobar.do.not.activate"|'  $(1)/etc/piratebox.config
+endef
+
 define Package/piratebox-mod-imageboard
 	$(call Package/piratebox/Default)
 	DEPENDS:=piratebox +perl +perlbase-base +perl-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
 	TITLE:=imageboard modification module
 endef
 
+
+define Package/thewrong-mod-imageboard
+	$(call Package/piratebox/Default)
+	DEPENDS:=thewrong +perl +perlbase-base +perl-cgi +perlbase-essential +perlbase-file +perlbase-bytes +perlbase-config +perlbase-data +perlbase-db-file +perlbase-digest +perlbase-encode +perlbase-encoding +perlbase-fcntl +perlbase-gdbm-file +perlbase-integer +perlbase-socket +perlbase-time +perlbase-unicode +perlbase-unicore +perlbase-utf8 +perlbase-xsloader +unzip
+	TITLE:=imageboard modification module
+endef
+
 define Package/piratebox-mod-imageboard/description
+	not valid as a direct install.
+	Installs the needed packages and configurations to enhance the piratebox imageboard stuff
+endef
+
+define Package/thewrong-mod-imageboard/description
 	not valid as a direct install.
 	Installs the needed packages and configurations to enhance the piratebox imageboard stuff
 endef
@@ -200,6 +249,10 @@ define Package/piratebox-mod-imageboard/postinst
 	exit 0
 endef
 
+define Package/thewrong-mod-imageboard/postinst
+	$(call Package/piratebox-mod-imageboard/postinst)
+endef
+
 define Package/piratebox-mod-imageboard/prerm
 	#!/bin/sh
 	# cleanup our linked stuff
@@ -212,7 +265,16 @@ define Package/piratebox-mod-imageboard/prerm
 	[[ -L /usr/bin/unzip ]] && rm /usr/bin/unzip
 endef
 
+define Package/thewrong-mod-imageboard/prerm
+	$(call Package/piratebox-mod-imageboard/prerm)
+endef
+
 define Package/piratebox-mod-imageboard/install
+	$(INSTALL_DIR) $(1)/tmp/imageboard
+	$(INSTALL_BIN) ./files/spacer $(1)/tmp/imageboard/spacer
+endef
+
+define Package/thewrong-mod-imageboard/install
 	$(INSTALL_DIR) $(1)/tmp/imageboard
 	$(INSTALL_BIN) ./files/spacer $(1)/tmp/imageboard/spacer
 endef
@@ -224,4 +286,6 @@ define Build/Configure
 endef
 
 $(eval $(call BuildPackage,piratebox))
+$(eval $(call BuildPackage,thewrong))
 $(eval $(call BuildPackage,piratebox-mod-imageboard))
+$(eval $(call BuildPackage,thewrong-mod-imageboard))

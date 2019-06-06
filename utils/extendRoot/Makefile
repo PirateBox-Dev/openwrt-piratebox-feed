@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.15.1
+PKG_VERSION:=0.16.0
 PKG_RELEASE:=4
 
 
@@ -11,7 +11,7 @@ define Package/extendRoot/Default
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=extendRoot
-  URL:=http://piratebox.aod-rpg.de/dokuwiki/doku.php/extendRoot
+  URL:=http://piratebox.cc
   PKGARCH:=all
   MAINTAINER:=Matthias Strubel <matthias.strubel@aod-rpg.de>
 #  SUBMENU:=
@@ -43,6 +43,12 @@ define Package/extendRoot-piratebox
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
    DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo
+endef
+
+define Package/extendRoot-thewrong
+   $(call Package/extendRoot/piratebox)
+   TITLE:=TheWrong on extendRoot
+   DEPENDS:=$(DEPENDS) unzip
 endef
 
 define Package/extendRoot-librarybox
@@ -126,6 +132,12 @@ endef
 define Package/extendRoot-piratebox/description
    not valid as a direct install on root.
    run opkg -d ext install extendRoot-piratebox
+   that creates a fully linked installation of all needed packages from extended root mount pointing into the normal firmware
+endef
+
+define Package/extendRoot-thewrong/description
+   not valid as a direct install on root.
+   run opkg -d ext install extendRoot-thewrong
    that creates a fully linked installation of all needed packages from extended root mount pointing into the normal firmware
 endef
 
@@ -419,6 +431,7 @@ $(eval $(call BuildPackage,extendRoot))
 $(eval $(call BuildPlugin,extendRoot-python))
 $(eval $(call BuildPlugin,extendRoot-lighttpd))
 $(eval $(call BuildPlugin,extendRoot-piratebox))
+$(eval $(call BuildPlugin,extendRoot-thewrong))
 $(eval $(call BuildPlugin,extendRoot-php))
 $(eval $(call BuildPlugin,extendRoot-php-fastcgi))
 $(eval $(call BuildPlugin,extendRoot-zoneinfo))
