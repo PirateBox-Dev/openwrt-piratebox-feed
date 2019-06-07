@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extendRoot
-PKG_VERSION:=0.16.0
-PKG_RELEASE:=6
+PKG_VERSION:=0.16.1
+PKG_RELEASE:=1
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -42,18 +42,19 @@ endef
 define Package/extendRoot/PBX-Default
    $(call Package/extendRoot/Default)
    TITLE:=PirateBox on extendRoot
-   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +piratebox +extendRoot-php +extendRoot-zoneinfo
+   DEPENDS:=extendRoot +extendRoot-lighttpd +extendRoot-python +extendRoot-php +extendRoot-zoneinfo
 endef
 
 define Package/extendRoot-piratebox
    $(call Package/extendRoot/PBX-Default)
    TITLE:=PirateBox on extendRoot
+   DEPENDS += +piratebox +unzip
 endef
 
 define Package/extendRoot-thewrong
    $(call Package/extendRoot/PBX-Default)
    TITLE:=TheWrong on extendRoot
-   DEPENDS += +unzip
+   DEPENDS += +thewrong +unzip
 endef
 
 define Package/extendRoot-librarybox
