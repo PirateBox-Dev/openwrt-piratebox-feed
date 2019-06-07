@@ -147,7 +147,7 @@ pb_netconfig() {
   uci set "network.lan.proto=static"
 
   # Make sure that the radio's are set in the wirless config
-  wifi detect >> /etc/config/wireless
+  wifi config
 
   #get all wifi-devices
   pb_radios=`uci show wireless | grep '=wifi-device' | awk -F'[.=]' '{ print $2 }'`
