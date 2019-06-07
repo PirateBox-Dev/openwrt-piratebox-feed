@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=piratebox
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=9
+PKG_RELEASE:=10
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -114,7 +114,7 @@ endef
 
 define Package/thewrong/postinst
 	$(call Package/piratebox/postinst)
-endef 
+endef
 
 define Package/piratebox/preinst
 	#!/bin/sh
@@ -133,7 +133,7 @@ endef
 
 define Package/thewrong/preinst
 	$(call Package/piratebox/preinst)
-endef 
+endef
 
 define Package/piratebox/prerm
 	#!/bin/sh
