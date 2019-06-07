@@ -19,14 +19,14 @@ define Package/piratebox
 	$(call Package/piratebox/Default)
 	MENU:=1
 	TITLE:=PirateBox-Main package
-  	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip
+	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip
 endef
 
 define Package/thewrong
 	$(call Package/piratebox/Default)
 	MENU:=1
 	TITLE:=The.Wrong customzied PirateBox package
-  	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip +lighttpd-mod-accesslog +lighttpd-mod-status
+	DEPENDS:=+php7 +python +lighttpd +lighttpd-mod-cgi +lighttpd-mod-redirect +lighttpd-mod-alias +lighttpd-mod-setenv  +lighttpd-mod-fastcgi +php7-cgi +zoneinfo-core +zoneinfo-simple +php7-mod-json  +php7-mod-pdo-sqlite +php7-mod-sqlite3 +php7-mod-pdo +php7-mod-gd +ip +lighttpd-mod-accesslog +lighttpd-mod-status
 	URL:=https://github.com/miyovanstenis/the.wrong
 endef
 
@@ -201,9 +201,9 @@ endef
 
 define Package/thewrong/install
 	$(call Package/piratebox/install,$1)
-	sed -i -e 's|pb_usbdir="$$ext_usbmount/PirateBox"|pb_usbdir="$$ext_usbmount/the.wrong"|'  $(1)/etc/piratebox.config
+	sed -i -e 's|ext_usbmount/PirateBox|ext_usbmount/the.wrong|'  $(1)/etc/piratebox.config
 	sed -i -e 's|pb_wireless_ssid="PirateBox - Share Freely"|pb_wireless_ssid="The.Wrong"|' $(1)/etc/piratebox.config
-	sed -i -e 's|pb_wireless_ssid="PirateBox - Share Freely"|pb_wireless_ssid="The.Wrong"|' $(1)/etc/piratebox.config
+	sed -i -e 's|pb_hostname="piratebox.lan"|pb_hostname="the.wrong"|'  $(1)/etc/piratebox.config
 	sed -i -e 's|pb_inst_flag_mesh="/etc/init.d/mesh"|pb_inst_flag_mesh="/foobar.do.not.activate"|'  $(1)/etc/piratebox.config
 endef
 
