@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
 PKG_VERSION:=0.5.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz

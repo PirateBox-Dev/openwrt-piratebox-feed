@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 
-START=80
+START=89
 NAME=autocfg
 EXTRA_COMMANDS="reset"
 EXTRA_HELP="reset	Removes all config files on the usb stick and recreates them"
