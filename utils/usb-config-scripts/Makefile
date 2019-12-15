@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=usb-config-scripts
-PKG_VERSION:=0.5.0
+PKG_VERSION:=0.5.1
 PKG_RELEASE:=3
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/usb-config-scripts-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/PirateBox-Dev/usb-config-scripts/archive/
-PKG_MD5SUM:=dfc69b3663afb4a53c9c6a1a438ce476
+PKG_MD5SUM:=fc165d8d3c2543c224274b645a8aefe3
 PKG_CAT:=zcat
 
 
